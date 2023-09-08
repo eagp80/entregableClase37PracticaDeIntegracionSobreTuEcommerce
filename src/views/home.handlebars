@@ -1,0 +1,20 @@
+<div>
+
+{{#if products}}
+
+    <h1> Aquí tenemos la lista de productos con file-system:</h1>
+
+    <ul>
+        {{#each products}}
+            <li><p> <b> Nombre de producto {{this.id}}: </b> {{this.title}}. Descripción: {{this.description}}. 
+            Código: {{this.code}} Precio:{{this.price}}. Estatus: {{this.status}}.
+            Stock: {{this.stock}}. Categoria: {{this.category}}. Thumbnails: {{this.thumbnails}}.
+            </p></li>
+        {{/each}}
+    </ul>
+
+{{else}}
+    <h1> Aun no tenemos productos.</h1>
+{{/if}}
+
+</div>

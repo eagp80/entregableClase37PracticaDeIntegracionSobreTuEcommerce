@@ -1,0 +1,34 @@
+{{>profile1 }}
+
+<H1>Lista de PRODUCTOS</H1>
+
+{{#each payload}}
+  <li>Nombre producto:   {{this.title}}.  Code: {{this.code}}.  Estatus: {{this.status}}.  Stock: {{this.stock}}.  Categoría: {{this.category}}.   Precio: $ {{this.price}}. </li>
+  <form action="{{../cartOwn}}{{this.id}}" method="post">
+    <button type="submit">Add to cart</button>
+  </form>
+{{/each}}
+<script>
+    let hasNextPage=false;
+    hasNextPage={{hasNextPage}}
+    console.log(hasNextPage);
+</script>
+<div>   
+    {{!-- <p>Tiene página previa: {{hasPrevPage}}</p>
+    <p>Tiene página siguiente: {{hasNextPage}}</p> --}}
+    <h2>Página actual: {{page}}</h2>
+</div>
+
+<div>
+{{#if hasPrevPage}}
+{{!-- <p> Pagina previa es: {{prevPage}}</p> --}}
+<a href="{{prevLink}}"> <button>Anterior</button> </a>
+{{/if}}
+</div>
+
+<div>
+{{#if hasNextPage}}
+{{!-- <p> Pagina siguiente es: {{nextPage}}</p> --}}
+<a href="{{nextLink}}"> <button>Siguiente</button> </a>
+{{/if}}
+</div>

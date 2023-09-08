@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <h3>BIENVENIDOS A SERVIDOR EFREN. Este formulario es para hacer post, agregar producto. La parte de imagen aún no está implementada.
+        <form action="/api/products" method="POST" enctype="multipart/form-data">
+        <!-- <form action="/api/products" method="POST" enctype="aplication/json; multipart/form-data"> -->
+
+            <label>Title: </label>
+            <input name="title">
+            <label >Description: </label>
+            <input name="description">
+            <label >Code: </label>
+            <input name="code">
+            <label >Price: </label>
+            <input name="price">
+            <label >Status: </label>
+            <input name="status">
+            <label >Stock: </label>
+            <input name="stock">
+            <label >Category: </label>
+            <input name="category">
+            <label >Thumbnails: </label>
+            <input name="thumbnails">         
+
+            <label>Imagen (no enviar imagen): </label>
+            <input type="file" name="image"> 
+            <!-- respetar image porque es la referencia en todo el codigo -->
+            <input type="submit">
+        </form>
+    </h3>
+   
+</body>
+</html>

@@ -1,0 +1,15 @@
+<H1>Lista de carritos</H1>
+
+{{#each cartsMongo}}
+  <li>Carrito {{this.i}}: ObjetId: {{this.id}}
+     
+    {{!-- {{this.products}} --}}
+
+    {{#each this.products}}
+      {{this.title}} (Cantidad: {{this.qty}}),
+      
+    {{/each}}
+    
+    </li>
+{{/each}}
+<p>Donde Carrito "i" representa la posicion del carrito dentro de Mongo Atlas, no el ObjectId. Pueden haber carritos vacíos.</p>

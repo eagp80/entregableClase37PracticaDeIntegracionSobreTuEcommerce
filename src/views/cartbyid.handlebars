@@ -1,0 +1,16 @@
+<H1>Lista de productos en carrito:</H1>
+
+
+  <h2>Carrito ObjetId: {{id}} </h2>
+     
+    {{!-- {{this.products}} --}}
+
+    {{#each cartMongo}}
+    <li>
+      Producto {{this.i}}:  {{this.title}} (Cantidad: {{this.qty}}).
+    </li>     
+    {{/each}}
+    
+   
+
+<p>Donde Carrito "i" representa la posicion del producto dentro de arreglo products de ese carrito, no el ObjectId. Pueden haber carritos vacíos.</p>

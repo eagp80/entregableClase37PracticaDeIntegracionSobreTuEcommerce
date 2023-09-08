@@ -1,0 +1,59 @@
+<main>
+    <h1>LISTA DE PRODUCTOS</h1>
+    <h2>Agregar un producto:</h2>
+        <form action="/realtimeproducts" method="POST" id="product">
+            <label>Titulo: </label>
+            <input name="title" id="title">
+            <label >Descripcion: </label>
+            <input name="description" id="description">
+            <label >Código: </label>
+            <input name="code" id="code">
+            <label >Precio: </label>
+            <input name="price" type="number" id="price">
+            <br>
+
+            <label >Status: </label>
+            <input name="status" type="radio" value="true" class="status">
+            <label for="true">true</label>
+            <input name="status" type="radio" value="" class="status">
+            <label >false</label>
+
+            <label for="false">Stock: </label>
+            <input name="stock" type="number" id="stock">
+            <label >Categoria: </label>
+            <input name="category" id="category">
+            <label >Thumbnails: </label>
+            <input name="thumbnails" id="thumbnails">
+            <input type="submit">
+
+        </form>
+        <div id="productNew">Nuevo producto añadido aparecerá acá, en una tabla.</div>
+        
+        {{!-- ***lo de vista home*** --}}
+        <div>
+
+        {{#if products}}
+
+            <h1> Aquí tenemos la lista de productos:</h1>
+
+            <ul>
+                {{#each products}}
+                    <li><p> <b> Nombre de producto (con id: {{this.id}}): </b> {{this.title}}. Descripción: {{this.description}}. 
+                    Código: {{this.code}} Precio:{{this.price}}. Estatus: {{this.status}}.
+                    Stock: {{this.stock}}. Categoria: {{this.category}}. Thumbnails: {{this.thumbnails}}.
+                    </p></li>
+                {{/each}}
+            </ul>
+
+        {{else}}
+            <h1> Aún no tenemos productos. Al añadir productos irán apareciendo aquí abajo:</h1>
+        {{/if}}
+
+        </div>
+        <div id="productList">
+            Aquí aparecerán los productos que se vayan agregando.
+        </div>
+
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realTimeProducts.js"></script>
