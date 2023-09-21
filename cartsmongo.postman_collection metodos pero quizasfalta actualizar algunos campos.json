@@ -1,0 +1,186 @@
+{
+	"info": {
+		"_postman_id": "6bce3d22-53f5-4780-9fe0-129faeb3734a",
+		"name": "cartsmongo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27350697"
+	},
+	"item": [
+		{
+			"name": "Obtener carrito por id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/cartsmongo/649dd0142f44220462505665",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"cartsmongo",
+						"649dd0142f44220462505665"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear un nuevo carrito sin productos",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/cartsmongo/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"cartsmongo",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Elimar un producto pid en un carrito cid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/cartsmongo/649dd0142f44220462505665/productmongo/6495fb643b635423699ee068",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"cartsmongo",
+						"649dd0142f44220462505665",
+						"productmongo",
+						"6495fb643b635423699ee068"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar un producto pid a un carrito pid",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/cartsmongo/649dd0142f44220462505665/productmongo/6495fb643b635423699ee068",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"cartsmongo",
+						"649dd0142f44220462505665",
+						"productmongo",
+						"6495fb643b635423699ee068"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar todos los productos de un carrito",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/carts/649dd52c4c959ba4738897b9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"carts",
+						"649dd52c4c959ba4738897b9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar carrito con un array de productos completo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"products\": [\r\n    {\r\n      \"product\": \"64af1c7cfe5d40d9346bb95a\",\r\n      \"quantity\": 6\r\n    },\r\n    {\r\n      \"product\": \"64af1c7cfe5d40d9346bb95b\",\r\n      \"quantity\": 7\r\n    },\r\n    {\r\n      \"product\": \"64af1c7cfe5d40d9346bb95c\",\r\n      \"quantity\": 8\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/carts/649dd52c4c959ba4738897b9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"carts",
+						"649dd52c4c959ba4738897b9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar un carrito seteando su quantity en un producto pid",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"quantity\": 11\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/carts/649dd52c4c959ba4738897b9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"carts",
+						"649dd52c4c959ba4738897b9"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

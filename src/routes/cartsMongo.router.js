@@ -38,10 +38,12 @@ class CartsMongoRoutes {
           cart: newCartMongo,
         });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: cartsMongo.router.js:32 ~ CartsMongoRoutes ~ this.router.post ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);   
+       
         //recibe tambiem el catch de createProductMongo
          return res.status(400).json({
             message: error.message ?? error            
@@ -71,10 +73,12 @@ class CartsMongoRoutes {
           cart: cartMongoData,
         });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: cartsMongo.routes.js:48 ~ CartsMongoRoutes ~ this.router.get ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);   
+ 
         //recibe tambiem el catch de getCartById ProductMongo
          return res.status(400).json({
             message: error.message ?? error            
@@ -109,51 +113,123 @@ class CartsMongoRoutes {
         //if(cartMongoData.products[0].product==new ObjectId("000000000000000000000000").toString()){
         if(cartMongoData.products==[]){           
             const productNewId= new ObjectId(pid);
-            console.log("entro en 2");
+            req.logger.debug(
+              `Method: ${req.method}, url: ${
+                req.url
+              } - time: ${new Date().toLocaleTimeString()
+              } entro en 2`
+            );  
+
+            //console.log("entro en 2");
             cartsMongoModel.findByIdAndUpdate(cid, { products: [{product: productNewId, quantity: 1}] }, { new: true })
             .then(updatedCart => {//lo que devuelve lo muestro en consola
-              console.log(updatedCart);
+              req.logger.info(
+                `Method: ${req.method}, url: ${
+                  req.url
+                } - time: ${new Date().toLocaleTimeString()
+                } updatedCart: ${updatedCart}`
+              );  
+              //console.log(updatedCart);
             })
             .catch(error => {
-              console.error("error Efren1",error);
+              req.logger.fatal(
+                `Method: ${req.method}, url: ${
+                  req.url
+                } - time: ${new Date().toLocaleTimeString()
+                } con ERROR: ${error.message}`);   
             });
         } else {// fin if 2, else al if 2... Situacion 3. si el carrito existe, tiene Id distinto de "000000000000000000000000" verificar si ya tiene el producto
-            console.log("verificando antes de entrar a 3 o 4")
-            const idComp = new ObjectId(pid);
+          req.logger.debug(
+            `Method: ${req.method}, url: ${
+              req.url
+            } - time: ${new Date().toLocaleTimeString()
+            } Comparando cada producto en carrito con pid pasado por parametro en url, antes de entrar a 3 o 4 `
+          );  
+            //console.log("verificando antes de entrar a 3 o 4")
+            //const idComp = new ObjectId(pid);
             var existeProduct = false;
             var indexOfProducts= 0;
-            cartMongoData.products.forEach((element,i) => {       
-              console.log(element.product.toString());
-              console.log(pid);  
+            cartMongoData.products.forEach((element,i) => {  
+              req.logger.debug(
+                `Method: ${req.method}, url: ${
+                  req.url
+                } - time: ${new Date().toLocaleTimeString()
+                } product: ${element.product.toString()} `
+              );       
+              req.logger.debug(
+                `Method: ${req.method}, url: ${
+                  req.url
+                } - time: ${new Date().toLocaleTimeString()
+                } pid: ${pid} `
+              );  
 
               if(element.product.toString() === pid){//este if solo funciono con toString() en ambos
-                console.log("entro al ifffffff");
+                req.logger.debug(
+                  `Method: ${req.method}, url: ${
+                    req.url
+                  } - time: ${new Date().toLocaleTimeString()
+                  } el producto ya lo tiene e carrito`
+                );  
+                //console.log("entro al ifffffff");
                 existeProduct= true;
                 indexOfProducts=i;              
               }              
             }); 
-            console.log(existeProduct);           
-            if(existeProduct){//if 3 situacion 3
+
+            //console.log(existeProduct);           
+            if(existeProduct){//if 3 situacion 3, si ya se tiene el producto incrementamos quantity
                   cartMongoData.products[indexOfProducts].quantity++;
-                  console.log("entrooooo en 3");
+                  req.logger.debug(
+                    `Method: ${req.method}, url: ${
+                      req.url
+                    } - time: ${new Date().toLocaleTimeString()
+                    }  entrooooo en caso 3, ya tiene el producto se incrementa quantity `
+                  );
+                  //console.log("entrooooo en 3");
                   cartsMongoModel.findByIdAndUpdate(cid, {products: cartMongoData.products }, { new: true })
                   .then(updatedCart => {
-                  console.log("Carrito actualizado");
-                  console.log(updatedCart);
+                    req.logger.http(
+                      `Method: ${req.method}, url: ${
+                        req.url
+                      } - time: ${new Date().toLocaleTimeString()
+                      }Carrito actualizado updatedCart: ${updatedCart}  `
+                    );
+                  //console.log("Carrito actualizado");
+                  //console.log(updatedCart);
                   })
                   .catch(error => {
-                  console.error("error Efren3",error);
+                    req.logger.fatal(
+                      `Method: ${req.method}, url: ${
+                        req.url
+                      } - time: ${new Date().toLocaleTimeString()
+                      } con ERROR: ${error.message}`);                                 
                   });
             } else {//else a if 3,  situacion 4 . si el carrrito existe y no tiene el producto 
-                  console.log("entrooooo en 4")
+              req.logger.debug(
+                `Method: ${req.method}, url: ${
+                  req.url
+                } - time: ${new Date().toLocaleTimeString()
+                } entro en caso 4, no tiene el producto, se agregara un nuevo ObjectId del producto en el carrito`
+              );    
+              // console.log("entrooooo en 4")
                   const productNewId= new ObjectId(pid);
                   cartMongoData.products.push({ product:productNewId, quantity: 1 }); 
                   cartsMongoModel.findByIdAndUpdate(cid, {products: cartMongoData.products }, { new: true })
                   .then(updatedCart => {
-                  console.log(updatedCart);
+                    req.logger.info(
+                      `Method: ${req.method}, url: ${
+                        req.url
+                      } - time: ${new Date().toLocaleTimeString()
+                      } updateCart: ${updatedCart}`
+                    );
+                  ///console.log(updatedCart);
                   })
                   .catch(error => {
-                  console.error("error Efren4",error);
+                    req.logger.fatal(
+                      `Method: ${req.method}, url: ${
+                        req.url
+                      } - time: ${new Date().toLocaleTimeString()
+                      } con ERROR: ${error.message}`);                    
                   });             
             }// fin else de situacion 4
         }//fin else del if 2, situacion 3
@@ -162,10 +238,11 @@ class CartsMongoRoutes {
           message: `cart found successfully and update in Mongo Atlas`        
         });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: cartsMongo.routes.js:140 ~ CartsMongoRoutes ~ this.router.get ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);   
         //recibe tambiem el catch de getCartById ProductMongo
          return res.status(400).json({
             message: error.message ?? error            
@@ -194,10 +271,11 @@ class CartsMongoRoutes {
           return res.json({message: `no existe el producto en este carrito`})
         }
       } catch (error) {
-        console.log(
-          "🚀 ~ file: cartsMongo.router.js:178 ~ CartsMongoRoutes ~ this.router.delete ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);   
       }
       
     });
@@ -217,10 +295,11 @@ class CartsMongoRoutes {
           result:result });
         
       } catch (error) {
-        console.log(
-          "🚀 ~ file: cartsMongo.router.js:219 ~ CartsMongoRoutes ~ this.router.delete ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);   
       }
       
     });
@@ -242,10 +321,11 @@ class CartsMongoRoutes {
 
 
       } catch (error) {
-        console.log(
-          "🚀 ~ file: cartsMongo.router.js:246 ~ CartsMongoRoutes ~ this.router.put ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);   
       }
     });
 
@@ -266,10 +346,11 @@ class CartsMongoRoutes {
         message: `cartsMongo PUT set quantity in product pid of cart cid`,
         result:result });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: cartsMongo.router.js:271 ~ CartsMongoRoutes ~ this.router.put ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);   
       }
     });
   }

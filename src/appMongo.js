@@ -10,7 +10,7 @@ import session from "express-session";
 import mongoStore from "connect-mongo";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
-
+import { setLogger } from "./utils/logger.js";
 
 class AppMongo {
   appMongo;//referencia
@@ -68,6 +68,7 @@ class AppMongo {
     initializePassport();
     this.appMongo.use(passport.initialize());
     this.appMongo.use(passport.session());
+    this.appMongo.use(setLogger); //para poder usar loggers en todas las rutas
 
   }
 

@@ -1,0 +1,14 @@
+{"level":"error","message":"Petición GET recibida en ERROR  - Error Fatal en GET , NOS TUMBA LA API"}
+fatal: Petición GET recibida en /fatal con ERROR:  - Error Fatal en GET , NOS TUMBA LA API
+fatal: Petición GET recibida en /fatal con ERROR:  - Error Fatal en GET , NOS TUMBA LA API
+error: Petición GET recibida en /error
+error: Petición GET recibida en /error
+error: Petición GET recibida en /error
+error: Petición GET recibida en /error
+fatal: Petición GET recibida en /fatal con ERROR:  - Error Fatal en GET , NOS TUMBA LA API
+error: Method: GET, url: /loggerTest/error - time: 8:51:55 p. m.
+error: Method: GET, url: /loggerTest/error - time: 8:57:39 p. m.
+fatal: Method: GET, url: /loggerTest/fatal - time: 8:57:55 p. m.
+         con ERROR:  - Error Fatal en GET , NOS TUMBA LA API
+fatal: Method: GET, url: /loggerTest/fatal - time: 9:01:35 p. m. con ERROR:  - Error Fatal en GET , NOS TUMBA LA API
+error: Method: GET, url: /loggerTest/error - time: 9:02:14 p. m.

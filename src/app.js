@@ -24,6 +24,7 @@ import mockingProducts from "./routes/mockingProducts.router.js";
 import displayRoutes from "express-routemap";
 import __dirname from './utils.js'
 import AppMongo from './appMongo.js'
+import LoggerTestRoutes from "./routes/loggerTest.routes.js";
 
 
 const appMongo = new AppMongo([
@@ -33,6 +34,7 @@ const appMongo = new AppMongo([
        new SessionViewsRoutes(),
        new SessionRoutes(),
        new UserRoutes(),
+       new LoggerTestRoutes(),
      ]);
      
 appMongo.listen();

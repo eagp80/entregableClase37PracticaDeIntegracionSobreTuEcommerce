@@ -4,7 +4,6 @@ import ProductsMongoManager from "../dao/managers/productMongo.manager.js";
 import productMongoModel from "../dao/models/productsMongo.models.js";
 import { NODE_ENV, PORT, API_VERSION, CURSO } from "../config/config.js";
 import { passportCall } from "../utils/jwt.js";
-import authorization from "../middleware/authorization.middleware.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
 
 

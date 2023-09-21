@@ -27,20 +27,36 @@ const initializePassport = () => {
 
   passport.use('registerpassport', new LocalStrategy(
     {passReqToCallback:true, usernameField:'email'}, async (req,username,password,done)=>{
-      console.log("entre a registerpassport");
+      req.logger.http(
+        `Method: ${req.method}, url: ${
+          req.url
+        } - time: ${new Date().toLocaleTimeString()
+        } entraron a registerpassport`
+      );
       const {first_name, last_name, email,age} = req.body;
       const role= 'USER';
       try {
         let user = await userModel.findOne({email:username});
         if(user){
-          console.log("User already exist");
-          return done(null,false); // ya existe usuario no puedes conttinuar
+          req.logger.http(
+            `Method: ${req.method}, url: ${
+              req.url
+            } - time: ${new Date().toLocaleTimeString()
+            } User already exist, you does not to continue`
+          );
+          return done(null,false); // ya existe usuario no puedes continuar
         }
         const cartMongo = {"products": []};
         const newCartMongo = await cartsMongoManager.createCartMongo(cartMongo);
         if (!newCartMongo) {
+          req.logger.warning(
+            `Method: ${req.method}, url: ${
+              req.url
+            } - time: ${new Date().toLocaleTimeString()
+            } cartMongo asociado no creado al registrarse usuario, no se crea nuevo usuario`
+          );
           return res.json({
-            message: `the cartMongo not created`,
+            message: `the cartMongo not created, and the user not created`,
           });
         }
 
@@ -61,8 +77,13 @@ const initializePassport = () => {
         return done(null,result);
         
       } catch (error) {
-        console.log("🚀 ~ file: passport.config.js:19 ~ {passReqtoCallback:true,usernameField:'email'}, ~ error:", error)
-        return done("Error al crear usuario:" + error)
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } error fatal: ${error}`
+        );
+        return done("Error al intentar crear usuario:" + error)
       }
     }
   ));
@@ -81,7 +102,7 @@ const initializePassport = () => {
           let user = await userModel.findOne({ email: profile._json?.email });
           
           if (!user) {
-            console.log("entro a addNewUser");
+            console.log("entro a addNewUser en passport-github");// no tengo disponible aca req para usar req.logger
             const cartMongo = {"products": []};
             const newCartMongo = await cartsMongoManager.createCartMongo(cartMongo);
              if (!newCartMongo) {
@@ -104,8 +125,14 @@ const initializePassport = () => {
             let newUser = await userModel.create(addNewUser);
             done(null, newUser);
           } else {
-            // ya existia el usuario
-            console.log("entro a ya existia usuario");
+            // ***ya existia el usuario***
+            // req.logger.info(
+            //   `Method: ${req.method}, url: ${
+            //     req.url
+            //   } - time: ${new Date().toLocaleTimeString()
+            //   } entró a ya existía usuario`
+            // );
+            console.log("Entró a ya existía usuario en passport-github");// no tengo disponible aca req para usar req.logger
 
             done(null, user);
           }

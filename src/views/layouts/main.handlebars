@@ -11,10 +11,16 @@
 
            <p>Ruta de inicio, de entrada a la api (redirige al login): 
             *********** http://localhost:8000/api/v1/ </p> 
-            <h3 style="background-color:DodgerBlue;"> Ruta de mocking, generando 50 productos con faker en localhost:8081/mockingproducts </h3>
-            <h3 style="background-color:DodgerBlue;"> Ruta de creacion de producto con postmnan mediante metodo post y raw json http://localhost:8000/api/v1/products/</h3>
-            <h3 style="background-color:DodgerBlue;">La ruta anterior valida si las propiedades requeridas del producto a crear  son recibidas  y
-                 envia un mensaje personalizado mediante error-handler y Http-Status-Code</h3>
+            <h3 style="background-color:DodgerBlue;"> Deberá loguearse en localhost:8000/api/v1 para realizar pruebas de logger con winston</h3>
+            <h3 style="background-color:DodgerBlue;"> 
+                Las rutas para las pruebas de logger con winston son (localhost:8000) api/v1/loggerTest/fatal, 
+                api/v1/loggerTest/error, api/v1/loggerTest/warning, api/v1/loggerTest/info, api/v1/loggerTest/http, 
+                api/v1/loggerTest/debug 
+            </h3>
+            <p> Ruta de mocking, generando 50 productos con faker en localhost:8081/mockingproducts </p>
+            <p> Ruta de creacion de producto con postmnan mediante metodo post y raw json http://localhost:8000/api/v1/products/</p>
+            <p>La ruta anterior valida si las propiedades requeridas del producto a crear  son recibidas  y
+                 envia un mensaje personalizado mediante error-handler y Http-Status-Code</p>
 
             <p>Ruta de usuario actual logueado (muestra usuario examinando token):
             *********** http://localhost:8000/api/v1/session/current</p>

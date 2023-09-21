@@ -2,7 +2,6 @@ import { Router } from "express";
 import userModel from "../dao/models/user.model.js";
 
 import { passportCall } from "../utils/jwt.js";
-import authorization from "../middleware/authorization.middleware.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
 
 import { API_VERSION } from "../config/config.js";
@@ -21,7 +20,7 @@ class UserRoutes {//no es un Router pero adentro tiene uno
 
   initUserRoutes() {//  api/v1/current/
     this.router.get(`${this.path}`, 
-    [passportCall("jwt"), authorization("USER")],    
+    [passportCall("jwt"), handlePolicies(["USER","ADMIN"])],    
     (req, res) =>{      
         return res.send(req.user); 
     });

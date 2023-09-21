@@ -7,7 +7,6 @@ import passport from "passport";
 import { generateJWT } from "../utils/jwt.js";
 
 import { passportCall } from "../utils/jwt.js";
-import authorization from "../middleware/authorization.middleware.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
 
 
@@ -45,7 +44,11 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
         }        
         return res.json({ message: "user info", user });
       } catch (error) {
-      console.log("🚀 ~ file: session.routes.js:48 ~ SessionRoutes ~ error:", error)
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error}`);  
       } 
     });
 
@@ -53,14 +56,22 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
       
       try{
         //algo
-          console.log("haciendo logout");
+        req.logger.http(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } - Alguien haciendo logout`);  
           req.session.destroy((err) => {//cambiar esto para trabajar con token y cookie
           if (!err) return res.redirect(`../login`);
           return res.send({ message: `logout Error`, body: err });
         });
         
       } catch (error) {
-        console.log("🚀 ~ file: session.routes.js:23 ~ ProductsMongoRoutes ~ this.router.get ~ error:", error)
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error}`);        
       } 
 
     });
@@ -72,12 +83,19 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
         if(!email||!password) return res.status(400).send({status:"error", error: "Incompletes values"})
         //no es necesario consultar password a  base de datos
         const session = req.session;
-        console.log("🚀 ~ file: session.routes.js:35 ~ SessionRoutes ~ this.router.post ~ session:", session)
-           
+        req.logger.http(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } haciendo session: ${session}`);             
         // { email: email }
         //console.log(await userModel.find());
         const findUser = await userModel.findOne({ email });
-        console.log("🚀 ~ file: session.routes.js:41 ~ SessionRoutes ~ this.router.post ~ findUser:", findUser)
+        req.logger.http(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } -buscando usuario por email, resultado: ${findUser}`);      
            
         if (!findUser) {
           return res
@@ -106,15 +124,21 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
         };
     
         const token = await generateJWT({ ...signUser });
-        console.log(
-          "🚀 ~ file: session.routes.js:43 ~ router.post ~ token:",
-          token
-        );
-    
+        req.logger.http(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } generando token: ${token}`); 
+   
         req.user = {
           ...signUser,
         };
-        console.log(req.user);
+        req.logger.info(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } -Guardando user en req.user: ${req.user}`); 
+        
         // TODO: RESPUESTA DEL TOKEN ALMACENADO EN LA COOKIE
          res.cookie("token", token, { maxAge: 1000000, httpOnly: true });
         //return res.send("login sucess with jwt and cookie");
@@ -129,16 +153,24 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
         });
 
       } catch (error) {
-      console.log("🚀 ~ file: session.routes.js:68 ~ SessionRoutes ~ this.router.post ~ error:", error)
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error}`);       
       } 
 
     });
 
-    this.router.post(`${this.path}/register`, passport.authenticate("registerpassport", {failureRedirect:'/failregister'}), async (req,res)=>{
+    this.router.post(`${this.path}/register`, passport.authenticate("registerpassport", {failureRedirect:'./failregister'}), async (req,res)=>{
       try{
         
         //algo
-        console.log("BODY ****", req.body);
+        req.logger.http(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } -Obteniendo body******, resultado: ${req.body}`); 
         // const { first_name, last_name, email, age, password } = req.body;
         
         // const pswHashed = await createHashValue(password);
@@ -158,13 +190,22 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
         // console.log(req.session);
         // return res.render("login");// OJO OJO OJO 
       } catch (error) {
-      console.log("🚀 ~ file: session.routes.js:105 ~ SessionRoutes ~ this.router.post ~ error:", error);
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error}`);       
       }
     })
 
-    this.router.get('/failregister', async (req,res)=>{
-      console.log("Failed register with passport");
-      res.send({error:"Failed register with passport"});
+    this.router.get(`${this.path}/failregister`, async (req,res)=>{
+      req.logger.warning(
+        `Method: ${req.method}, url: ${
+          req.url
+        } - time: ${new Date().toLocaleTimeString()
+        } Failed register with passport local`
+      );
+      res.send({error:"Failed register with passport local"});
     })
 
     this.router.get(`${this.path}/github`,passport.authenticate("github",{scope:['user:email']}), async (req, res) =>{
@@ -174,8 +215,14 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
     this.router.get(`${this.path}/githubcallback`, passport.authenticate('github',{failureRedirect:'/api/v1/login'}), async (req,res)=>{
       req.session.user=req.user;
       req.user.user=req.user;
-      console.log("entre a githubcallback");
-      console.log(req.user);
+      req.logger.http(
+        `Method: ${req.method}, url: ${
+          req.url
+        } - time: ${new Date().toLocaleTimeString()
+        } entró a githubcallback. Req.user: ${req.user}`
+      );
+      //console.log("entre a githubcallback");
+     //console.log(req.user);
       let email = req.user.email;
       const findUser = await userModel.findOne({ email });
 
@@ -196,13 +243,21 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
 
   
     this.router.get(`${this.path}/failgithub`,async (req,res)=>{
-      console.log("Failed strategy");
+      req.logger.error(
+        `Method: ${req.method}, url: ${
+          req.url
+        } - time: ${new Date().toLocaleTimeString()
+        } -Failed strategy, error: ${error}`);
       res.send({error:"Failed"});
     })
 
     this.router.post(`${this.path}/recover-psw`,async (req,res)=>{
       try {
-        console.log("BODY UPDATE***",req.body);
+        req.logger.info(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } -BODY UPDATE*** CAMPO CORREO PARA ACTUALIZAR PASSWORD:`+ JSON.stringify(req.body.email));
         const {new_password,email}=req.body;
         const newPswHashed = await createHashValue(new_password);
         const user = await userModel.findOne({email});
@@ -214,7 +269,11 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
         // return res.render("login");
         return res.redirect(`../login`);
       } catch (error) {
-        console.log("🚀 ~ file: session.routes.js:113 ~ SessionRoutes ~ this.router.post ~ error:", error)        
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error}`);             
       }
     })
   }  

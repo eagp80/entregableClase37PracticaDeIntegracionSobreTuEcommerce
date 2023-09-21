@@ -1,0 +1,181 @@
+{
+	"info": {
+		"_postman_id": "02dec95d-8885-431a-8b75-8ade7c2c2552",
+		"name": "Probando practica integradora clase24",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27350697"
+	},
+	"item": [
+		{
+			"name": "localhost:5000/api/session/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"eagp80@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/api/session/login",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"session",
+						"login"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:5000/api/session/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\":\"Raul\",\r\n    \"last_name\":\"Garcia\",\r\n    \"email\":\"rgarcia@gmail.com\",\r\n    \"age\":20,\r\n    \"password\":\"123456\",\r\n    \"role\":\"USER\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/api/session/register",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"session",
+						"register"
+					]
+				},
+				"description": "register"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:5000/api/users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiZWFncDgwQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlkIjoiNjRlMTJhMmU2MDk0NjhiODVkM2QyZjEzIn0sImlhdCI6MTY5MjU1MjE5OSwiZXhwIjoxNjkyNTUzOTk5fQ.ExFViHtNveQSkeDQtb38JlBSTVeqswSNnElsEHdBi9I",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users"
+					]
+				},
+				"description": "obtener todos los usuarios (estar logueado)"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:5000/api/notes",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiZWFncDgwQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlkIjoiNjRlMTJhMmU2MDk0NjhiODVkM2QyZjEzIn0sImlhdCI6MTY5MjU1MjE5OSwiZXhwIjoxNjkyNTUzOTk5fQ.ExFViHtNveQSkeDQtb38JlBSTVeqswSNnElsEHdBi9I",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"Nota-1\",\r\n    \"content\":\"Hola, primera prueba. N1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/api/notes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"notes"
+					]
+				},
+				"description": "crear nota (enviar bearer token )"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:5000/api/users/64e12a2e609468b85d3d2f13/notes/64e24d150068d09325847f4d",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiZWFncDgwQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlkIjoiNjRlMTJhMmU2MDk0NjhiODVkM2QyZjEzIn0sImlhdCI6MTY5MjU1MjE5OSwiZXhwIjoxNjkyNTUzOTk5fQ.ExFViHtNveQSkeDQtb38JlBSTVeqswSNnElsEHdBi9I",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/api/users/64e12a2e609468b85d3d2f13/notes/64e24d150068d09325847f4d",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"64e12a2e609468b85d3d2f13",
+						"notes",
+						"64e24d150068d09325847f4d"
+					]
+				},
+				"description": "relacionar vnota con usuaraio (enviar bearer token)"
+			},
+			"response": []
+		}
+	]
+}
