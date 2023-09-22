@@ -20,6 +20,8 @@ const {
   GITHUB_CLIENT_SECRET,
   SECRET_SESSION,  
   SECRET_JWT,
+  EMAIL,
+  PSW_MAIL
 } = process.env;
 
 export {
@@ -38,4 +40,6 @@ export {
   GITHUB_CLIENT_SECRET, 
   SECRET_SESSION,
   SECRET_JWT,
+  EMAIL,
+  PSW_MAIL
 };

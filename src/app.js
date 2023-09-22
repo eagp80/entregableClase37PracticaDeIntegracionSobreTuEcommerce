@@ -20,6 +20,7 @@ import SessionRoutes from "./routes/session.routes.js";//OJO
 import SessionViewsRoutes from "./routes/sessionViews.routes.js";//OJO
 import UserRoutes from "./routes/user.routes.js"
 import mockingProducts from "./routes/mockingProducts.router.js";
+import EmailRoutes from "./routes/email.routes.js"
 
 import displayRoutes from "express-routemap";
 import __dirname from './utils.js'
@@ -35,6 +36,7 @@ const appMongo = new AppMongo([
        new SessionRoutes(),
        new UserRoutes(),
        new LoggerTestRoutes(),
+       new EmailRoutes(),
      ]);
      
 appMongo.listen();
