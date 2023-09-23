@@ -32,10 +32,12 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
         //   productsMongoAmount: productsMongoArr.length,
         // });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: productsMongo.routes.js:44 ~ ProductsMongoRoutes ~ this.router.get ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+
         return httpResp.Error(res, `something wrong happens`, error.message);
       }
     });
@@ -54,10 +56,16 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
           productMongo: productMongoDetail,
         });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: productMongo.routes.js:60 ~ ProductsMongoRoutes ~ this.router.get ~ error:",
-          error
-        );
+        //si llega error aca decidir loguearlo (con logger) y devolver respuesta al usuario
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+
+        //usar codigos de status para enviar el error, 
+        //tambien se puede usar un handler global+uso de next ver la clase
+        res.send(error);
       }
     });
 
@@ -102,10 +110,12 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
         //   productMongo: newProductMongo,
         // });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: productsMongo.routes.js:79 ~ ProductsMongoRoutes ~ this.router.post ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+
         //recibe tambiem el catch de createProductMongo
         return httpResp.Error(res,error.message ?? error , error)
         //  return res.status(400).json({

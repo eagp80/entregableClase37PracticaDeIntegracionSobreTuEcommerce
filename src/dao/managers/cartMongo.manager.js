@@ -6,11 +6,13 @@ class CartsMongoManager {
       const allCartsMongo = await cartsMongoModel.find({});
 
       return allCartsMongo;
-    } catch (err) {
-      console.log(
-        "🚀 ~ file: carts.manager.js:10 ~ CartsMongoManager ~ getAllCartsMongo= ~ err:",
-        err
-      );
+    } catch (error) {
+
+      req.logger.fatal(
+        `Method: carts.manager.js:10 ~ CartsMongoManager ~ getAllCartsMongo,
+         - time: ${new Date().toLocaleTimeString()
+        } con ERROR: ${error.message}`);
+        throw error;
     }
   };
 
@@ -19,33 +21,37 @@ class CartsMongoManager {
       const allCartsMongo = await cartsMongoModel.find({}).populate('products.product');
 
       return allCartsMongo;
-    } catch (err) {
-      console.log(
-        "🚀 ~ file: carts.manager.js:19 ~ CartsMongoManager ~ getAllCartsMongoPopulate= ~ err:",
-        err
-      );
+    } catch (error) {
+      req.logger.fatal(
+        `Method: cartMongo.manager.js:25 ~ CartsMongoManager ~ getAllCartsMongoPopulate,
+         - time: ${new Date().toLocaleTimeString()
+        } con ERROR: ${error.message}`);
+        throw error;
+
     }
   };
 
   getCartMongoById = async (id) => {
     try {
       return await cartsMongoModel.findById({ _id: id });
-    } catch (err) {
-      console.log(
-        "🚀 ~ file: cartsMongo.manager.js:21 ~ CartsMongoManager ~ getCartMongoById= ~ err:",
-        err
-      );
+    } catch (error) {
+      req.logger.fatal(
+        `Method: cartsMongo.manager.js:39 ~ CartsMongoManager ~ getCartMongoById,
+         - time: ${new Date().toLocaleTimeString()
+        } con ERROR: ${error.message}`);
+        throw error;     
     }
   };
 
   getCartMongoByIdPopulate = async (id) => {
     try {
       return await cartsMongoModel.findById({ _id: id }).populate('products.product');
-    } catch (err) {
-      console.log(
-        "🚀 ~ file: cartsMongo.manager.js:21 ~ CartsMongoManager ~ getCartMongoById= ~ err:",
-        err
-      );
+    } catch (error) {
+      req.logger.fatal(
+        `Method: cartsMongo.manager.js:51 ~ CartsMongoManager ~ getCartMongoByIdPopulate,
+         - time: ${new Date().toLocaleTimeString()
+        } con ERROR: ${error.message}`);
+        throw error;
     }
   };
   
@@ -58,9 +64,10 @@ class CartsMongoManager {
       // if (!checkCartMongo) {
       //   return null;
       // }
-      console.log("cartMongoBody es:");
-      console.log(cartMongoBody);     
-
+      req.logger.info(
+        `Method: cartsMongo.manager.js:51 ~ CartsMongoManager ~ createCartMongo,
+         - time: ${new Date().toLocaleTimeString()
+        } cartMongoBody es: ${cartMongoBody}`);
       
       const newCartMongo = await cartsMongoModel.create(cartMongoBody);
       if(!newCartMongo){
@@ -69,12 +76,11 @@ class CartsMongoManager {
       return newCartMongo;
 
     } catch (error) {
-      console.log(
-        "🚀 ~ file: carts.manager.js:45 ~ CartsManager ~ createCarts=async ~ error:",
-        error
-      );
-      throw error;
-
+      req.logger.fatal(
+        `Method: cartsMongo.manager.js:79 ~ CartsMongoManager ~ createCartMongo,
+         - time: ${new Date().toLocaleTimeString()
+        } con ERROR: ${error.message}`);
+        throw error; 
     }
   };
 }

@@ -19,13 +19,13 @@ import CartsMongoRoute from './routes/cartsMongo.router.js';
 import SessionRoutes from "./routes/session.routes.js";//OJO
 import SessionViewsRoutes from "./routes/sessionViews.routes.js";//OJO
 import UserRoutes from "./routes/user.routes.js"
-import mockingProducts from "./routes/mockingProducts.router.js";
 import EmailRoutes from "./routes/email.routes.js"
 
 import displayRoutes from "express-routemap";
 import __dirname from './utils.js'
 import AppMongo from './appMongo.js'
 import LoggerTestRoutes from "./routes/loggerTest.routes.js";
+import MockingProductsRoutes from "./routes/mockingProducts.router.js";
 
 
 const appMongo = new AppMongo([
@@ -37,6 +37,7 @@ const appMongo = new AppMongo([
        new UserRoutes(),
        new LoggerTestRoutes(),
        new EmailRoutes(),
+       new MockingProductsRoutes(),
      ]);
      
 appMongo.listen();
@@ -54,7 +55,7 @@ app.use(express.static(`${__dirname}/public`));//lo que estara disponible, publi
 
 //app.use('/api/products',productsRouter);//al llegar la ruta especificada lo procesa con productsRouter
 //app.use('/api/carts',cartsRouter);//idem
-app.use("/mockingproducts",mockingProducts);
+// app.use("/mockingproducts",mockingProducts);
 
 
 app.engine('handlebars', handlebars.engine());//arrancamos y le ponemos un alias a el motor 
@@ -64,13 +65,13 @@ app.set('view engine', 'handlebars');//le decimos a app que el motor de vistas e
 //app.use('/',viewsRouter);//al llegar la ruta especificada lo procesa con viewsRouter
 
 //*****Se comenta este bloque de codigo para deshabilitar elservidor con file system */
-       const serverHTTP = app.listen(8081, ()=>{
-              console.log("Servidor con file-system en puerto 8081");
-              console.log("Rutas disponibles con file-system en puerto 8081:");
-              displayRoutes(app);
-              console.log("=================================================");
-              console.log("=================================================");
-       });
+       // const serverHTTP = app.listen(8081, ()=>{
+       //        console.log("Servidor con file-system en puerto 8081");
+       //        console.log("Rutas disponibles con file-system en puerto 8081:");
+       //        displayRoutes(app);
+       //        console.log("=================================================");
+       //        console.log("=================================================");
+       // });
 
 //const io= new Server (serverHTTP);
 
