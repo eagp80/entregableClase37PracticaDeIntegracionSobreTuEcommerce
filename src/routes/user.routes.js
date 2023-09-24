@@ -7,6 +7,8 @@ import handlePolicies from "../middleware/handle-policies.middleware.js";
 import { API_VERSION } from "../config/config.js";
 import { createHashValue, isValidPasswd } from "../utils/encrypt.js";
 import passport from "passport";
+import { HttpResponse } from "../middleware/error-handler.js";
+const httpResp  = new HttpResponse;
 //********* /api/v1/current/
 
 class UserRoutes {//no es un Router pero adentro tiene uno
@@ -40,7 +42,11 @@ class UserRoutes {//no es un Router pero adentro tiene uno
             }        
             return res.json({ message: "user info", user });
       } catch (error) {
-      console.log("🚀 ~ file: user.routes.js:46 ~ UserRoutes ~ error:", error)
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`);      
       } 
     });
     // TODO: eso solo deberia hacerlo el ADMIN
@@ -57,13 +63,20 @@ class UserRoutes {//no es un Router pero adentro tiene uno
         });
         }
         const userDel = await userModel.deleteOne({ id: uid });
-        console.log(
-            "🚀 ~ file: user.routes.js:50 ~ router.delete ~ userDel:",
-            userDel
-        );
+        req.logger.info(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con userDel: ${userDel}`); 
+
         return res.json({ message: "user deleted" });
       } catch (error) {
-      console.log("🚀 ~ file: user.routes.js:72 ~ UserRoutes ~ error:", error)
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+     
       }
     })
 

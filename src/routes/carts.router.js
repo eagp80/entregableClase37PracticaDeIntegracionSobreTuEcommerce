@@ -1,6 +1,8 @@
 import {Router} from "express";
 import uploader from "../services/uploader.js";
 import CartManager from "../dao/managers/cartManager.js";
+import { HttpResponse } from "../middleware/error-handler.js";
+const httpResp  = new HttpResponse;
 
 const cartManager = new CartManager("files/carts.json");
 const carts =cartManager.getCarts();
@@ -21,16 +23,22 @@ router.get('/:cid', (req,res)=>{
     const cid=req.params.cid;
     let cart= cartManager.getCartById(cid); 
     if(!cart){
-        res.send({error:"El carrito no existe."});
+        return httpResp.Error(res,{error:"El carrito no existe."} , cid);
+
+       // res.send({error:"El carrito no existe."});
     }   
-    else {        
-        res.send({productos:cart.products})};//envia productos dentro de carrito con id especificado 
+    else {    
+        return httpResp.Ok(res,`Productos en carrito con id: ${cid}`, {productos:cart.products});    
+        //res.send({productos:cart.products})};//envia productos dentro de carrito con id especificado 
+    }
 })
 
 
 router.post('/',(req,res)=>{//si son varios archivos uploader.array('nombre de campos') se almacena en req.files
-    cartManager.addCart();
-    res.send({status:"ok", message :"Carrito añadido (con array de productos vacío)" });
+    const result= cartManager.addCart();
+    return httpResp.Ok(res,"Carrito añadido (con array de productos vacío)", {result:result});    
+
+    //res.send({status:"ok", message :"Carrito añadido (con array de productos vacío)" });
 
 })
 
@@ -39,9 +47,9 @@ router.post('/:cid/product/:pid', (req,res)=>{
         const cid = req.params.cid;
         const pid = req.params.pid;       
        
-        cartManager.updateCart(cid,pid);
-        res.send({status:"ok", message :`Producto ${pid} añadido al carrito ${cid}`});
-    
+        const result = cartManager.updateCart(cid,pid);
+        return httpResp.Ok(res,`Producto ${pid} añadido al carrito ${cid}`, {result:result}); 
+        //res.send({status:"ok", message :`Producto ${pid} añadido al carrito ${cid}`});    
     })
 
 router.put('/:cid', (req,res)=>{

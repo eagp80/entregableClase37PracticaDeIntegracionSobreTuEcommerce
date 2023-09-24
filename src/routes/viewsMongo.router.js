@@ -5,9 +5,8 @@ import productMongoModel from "../dao/models/productsMongo.models.js";
 import { NODE_ENV, PORT, API_VERSION, CURSO } from "../config/config.js";
 import { passportCall } from "../utils/jwt.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
-
-
-
+import { HttpResponse } from "../middleware/error-handler.js";
+const httpResp  = new HttpResponse;
 
 class ViewsMongoRoutes {
   path = "/views";
@@ -87,7 +86,12 @@ class ViewsMongoRoutes {
           // products: cartMongo.products.map(prod => prod.product.title)
         }
       })
-      console.log(JSON.stringify(cartMongoMapped));    
+      req.logger.info(
+        `Method: ${req.method}, url: ${
+          req.url
+        } - time: ${new Date().toLocaleTimeString()
+        } con cartMongoMapped: ${JSON.stringify(cartMongoMapped)}`); 
+      
       cartMongoMapped.map(item2 =>  console.log("Item",item2.i,": ",item2.title,`, cantidad(${item2.qty}).`));  
         res.render("cartbyid", { cartMongo: cartMongoMapped, id:cid});
 
@@ -96,10 +100,12 @@ class ViewsMongoRoutes {
         //   cart: cartMongoData,
         // });
       } catch (error) {
-        console.log(
-          "🚀 ~ file: viewsMongo.routes.js:86 ~ viewsMongoRoutes ~ this.router.get ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+
         //recibe tambiem el catch de getCartMongoByIdPopulate 
          return res.status(400).json({
             message: error.message ?? error            
@@ -195,10 +201,12 @@ class ViewsMongoRoutes {
           cartOwn: cartOwn,
         })
       } catch (error) {
-        console.log(
-          "🚀 ~ file: viewsMongo.router.js:190 ~ viewsMongoRoutes ~ this.router.put ~ error:",
-          error
-        );
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+
       }
     });
     

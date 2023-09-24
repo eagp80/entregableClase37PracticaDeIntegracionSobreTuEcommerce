@@ -1,5 +1,7 @@
 import {Router} from "express";
 import ProductManager from '../dao/managers/productManager.js';
+import { HttpResponse } from "../middleware/error-handler.js";
+const httpResp  = new HttpResponse;
 
 
 const productManager = new ProductManager("files/products.json");

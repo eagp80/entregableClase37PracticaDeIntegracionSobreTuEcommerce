@@ -117,7 +117,7 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
           } con ERROR: ${error.message}`); 
 
         //recibe tambiem el catch de createProductMongo
-        return httpResp.Error(res,error.message ?? error , error)
+        return httpResp.Error(res,error.message ?? error , error);
         //  return res.status(400).json({
         //     message: error.message ?? error            
         //   });

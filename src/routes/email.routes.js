@@ -4,6 +4,8 @@ import passport from "passport";
 import { passportCall } from "../utils/jwt.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
 import nodemailer from "nodemailer";
+import { HttpResponse } from "../middleware/error-handler.js";
+const httpResp  = new HttpResponse;
 
 
 const transporter = nodemailer.createTransport ({
@@ -61,11 +63,13 @@ class EmailRoutes {
             console.log("🚀 ~ file: email.routes.js:46 ~ EmailRoutes ~ this.router.post ~ result:", result)
             return res.send({ok: true, message: `email  send to ${body.email}`})
         } catch (error) {
-            console.log("🚀 ~ file: email.routes.js:36 ~ EmailRoutes ~ this.router.post ~ error:", error)
-            
+          req.logger.fatal(
+            `Method: ${req.method}, url: ${
+              req.url
+            } - time: ${new Date().toLocaleTimeString()
+            } con ERROR: ${error.message}`);             
         }
     })
-
   }
 }
 export default EmailRoutes;

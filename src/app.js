@@ -55,7 +55,6 @@ app.use(express.static(`${__dirname}/public`));//lo que estara disponible, publi
 
 //app.use('/api/products',productsRouter);//al llegar la ruta especificada lo procesa con productsRouter
 //app.use('/api/carts',cartsRouter);//idem
-// app.use("/mockingproducts",mockingProducts);
 
 
 app.engine('handlebars', handlebars.engine());//arrancamos y le ponemos un alias a el motor 

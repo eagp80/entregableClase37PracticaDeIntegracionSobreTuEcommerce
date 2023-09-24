@@ -3,7 +3,10 @@ import cartsMongoModel  from "../dao/models/cartsMongo.models.js";
 import productMongoModel from "../dao/models/productsMongo.models.js";
 import CartMongoManager from "../dao/managers/cartMongo.manager.js";
 import { Schema, model, Types } from "mongoose";
+import { HttpResponse, EnumErrors } from "../middleware/error-handler.js";
 const { ObjectId } = Types;
+
+const httpResp  = new HttpResponse;
 
 
 
@@ -29,14 +32,18 @@ class CartsMongoRoutes {
         // TODO REVISANDO SI EL CARRITO YA FUE CREADO ANTERIOMENTE
         const newCartMongo = await this.cartMongoManager.createCartMongo(cartMongo);
         if (!newCartMongo) {
-          return res.json({
-            message: `the cartMongo not created`,
-          });
+          return httpResp.Error(res,`the cartMongo not created`, {error:EnumErrors.DATABASE_ERROR}); 
+          
+          // return res.json({
+          //   message: `the cartMongo not created`,
+          // });
         }//se cambio por throw,
-        return res.status(201).json({
-          message: `cart created successfully in Mongo Atlas`,
-          cart: newCartMongo,
-        });
+        return httpResp.Ok(res,`Carrito nuevo creado`, {newCartMongo:newCartMongo}); 
+
+        // return res.status(201).json({
+        //   message: `cart created successfully in Mongo Atlas`,
+        //   cart: newCartMongo,
+        // });
       } catch (error) {
         req.logger.fatal(
           `Method: ${req.method}, url: ${
@@ -45,9 +52,11 @@ class CartsMongoRoutes {
           } con ERROR: ${error.message}`);   
        
         //recibe tambiem el catch de createProductMongo
-         return res.status(400).json({
-            message: error.message ?? error            
-          });
+        return httpResp.Error(res,`the cartMongo not created`, {error:error}); 
+        
+        //  return res.status(400).json({
+        //     message: error.message ?? error            
+        //   });
         }
     });
 
@@ -64,14 +73,18 @@ class CartsMongoRoutes {
         let cartMongoData = await this.cartMongoManager.getCartMongoByIdPopulate(cid);//population        
         // TODO REVISANDO SI EL CARRITO YA FUE CREADO ANTERIOMENTE        
         if (!cartMongoData) {
-          return res.json({
-            message: `the cart by Id in Mongo Atlas not found`,
-          });
+          return httpResp.Error(res,`the cart by Id in Mongo Atlas not found`, {error:EnumErrors.INVALID_PARAMS}); 
+
+          // return res.json({
+          //   message: `the cart by Id in Mongo Atlas not found`,
+          // });
         }//se cambio por throw,
-        return res.status(201).json({
-          message: `cart found successfully in Mongo Atlas (with population)`,
-          cart: cartMongoData,
-        });
+        return httpResp.Ok(res,`cart found successfully in Mongo Atlas (with population)`, {cart: cartMongoData}); 
+
+        // return res.status(201).json({
+        //   message: `cart found successfully in Mongo Atlas (with population)`,
+        //   cart: cartMongoData,
+        // });
       } catch (error) {
         req.logger.fatal(
           `Method: ${req.method}, url: ${
@@ -80,9 +93,11 @@ class CartsMongoRoutes {
           } con ERROR: ${error.message}`);   
  
         //recibe tambiem el catch de getCartById ProductMongo
-         return res.status(400).json({
-            message: error.message ?? error            
-          });
+        return httpResp.Error(res,error.message ?? error, {error:EnumErrors.CONTROLLER_ERROR}); 
+        
+        //  return res.status(400).json({
+        //     message: error.message ?? error            
+        //   });
         }
     });
 
@@ -101,16 +116,11 @@ class CartsMongoRoutes {
 
         cartMongoData = await this.cartMongoManager.getCartMongoById(cid);
         
-        // TODO REVISANDO SI EL CARRITO YA FUE CREADO ANTERIOMENTE
-        
         if (!cartMongoData) {// 1. si no existe carrito no se hace nada
-          return res.json({
-            message: `the cart by Id in Mongo Atlas not found`,
-          });
-        }//se cambio por throw,
+          return httpResp.Error(res,`the cart by Id in Mongo Atlas not found`, {error:EnumErrors.INVALID_PARAMS}); 
 
-        //***** 2. si producto es el Id="000000000000000000000000" reemplazarlo */
-        //if(cartMongoData.products[0].product==new ObjectId("000000000000000000000000").toString()){
+        }
+          //2. si existe carrito pero no tiene productos
         if(cartMongoData.products==[]){           
             const productNewId= new ObjectId(pid);
             req.logger.debug(
@@ -118,27 +128,26 @@ class CartsMongoRoutes {
                 req.url
               } - time: ${new Date().toLocaleTimeString()
               } entro en 2`
-            );  
-
-            //console.log("entro en 2");
+            ); 
             cartsMongoModel.findByIdAndUpdate(cid, { products: [{product: productNewId, quantity: 1}] }, { new: true })
-            .then(updatedCart => {//lo que devuelve lo muestro en consola
+            .then(updatedCart => {
               req.logger.info(
                 `Method: ${req.method}, url: ${
                   req.url
                 } - time: ${new Date().toLocaleTimeString()
                 } updatedCart: ${updatedCart}`
               );  
-              //console.log(updatedCart);
+              cartMongoData=updatedCart;
             })
             .catch(error => {
               req.logger.fatal(
                 `Method: ${req.method}, url: ${
                   req.url
                 } - time: ${new Date().toLocaleTimeString()
-                } con ERROR: ${error.message}`);   
+                } con ERROR: ${error.message}`); 
+              return httpResp.Error(res,`the cart by Id in Mongo Atlas not update`, {error:EnumErrors.DATABASE_ERROR}); 
             });
-        } else {// fin if 2, else al if 2... Situacion 3. si el carrito existe, tiene Id distinto de "000000000000000000000000" verificar si ya tiene el producto
+        } else {// fin if 2, else al if 2... Situacion 3. si el carrito tiene productos verificar si ya tiene el producto
           req.logger.debug(
             `Method: ${req.method}, url: ${
               req.url
@@ -147,8 +156,8 @@ class CartsMongoRoutes {
           );  
             //console.log("verificando antes de entrar a 3 o 4")
             //const idComp = new ObjectId(pid);
-            var existeProduct = false;
-            var indexOfProducts= 0;
+            let existeProduct = false;
+            let indexOfProducts= 0;
             cartMongoData.products.forEach((element,i) => {  
               req.logger.debug(
                 `Method: ${req.method}, url: ${
@@ -170,13 +179,11 @@ class CartsMongoRoutes {
                   } - time: ${new Date().toLocaleTimeString()
                   } el producto ya lo tiene e carrito`
                 );  
-                //console.log("entro al ifffffff");
                 existeProduct= true;
                 indexOfProducts=i;              
               }              
             }); 
 
-            //console.log(existeProduct);           
             if(existeProduct){//if 3 situacion 3, si ya se tiene el producto incrementamos quantity
                   cartMongoData.products[indexOfProducts].quantity++;
                   req.logger.debug(
@@ -185,7 +192,6 @@ class CartsMongoRoutes {
                     } - time: ${new Date().toLocaleTimeString()
                     }  entrooooo en caso 3, ya tiene el producto se incrementa quantity `
                   );
-                  //console.log("entrooooo en 3");
                   cartsMongoModel.findByIdAndUpdate(cid, {products: cartMongoData.products }, { new: true })
                   .then(updatedCart => {
                     req.logger.http(
@@ -194,24 +200,25 @@ class CartsMongoRoutes {
                       } - time: ${new Date().toLocaleTimeString()
                       }Carrito actualizado updatedCart: ${updatedCart}  `
                     );
-                  //console.log("Carrito actualizado");
-                  //console.log(updatedCart);
+                    cartMongoData = updatedCart;
+
                   })
                   .catch(error => {
                     req.logger.fatal(
                       `Method: ${req.method}, url: ${
                         req.url
                       } - time: ${new Date().toLocaleTimeString()
-                      } con ERROR: ${error.message}`);                                 
+                      } con ERROR: ${error.message}`); 
+                    return httpResp.Error(res,`the cart by Id in Mongo Atlas not update`, {error:EnumErrors.DATABASE_ERROR}); 
+
                   });
-            } else {//else a if 3,  situacion 4 . si el carrrito existe y no tiene el producto 
+            } else {//else a if 3,  situacion 4 . si el carrrito existe y no tiene el producto hacer quantity =1
               req.logger.debug(
                 `Method: ${req.method}, url: ${
                   req.url
                 } - time: ${new Date().toLocaleTimeString()
                 } entro en caso 4, no tiene el producto, se agregara un nuevo ObjectId del producto en el carrito`
               );    
-              // console.log("entrooooo en 4")
                   const productNewId= new ObjectId(pid);
                   cartMongoData.products.push({ product:productNewId, quantity: 1 }); 
                   cartsMongoModel.findByIdAndUpdate(cid, {products: cartMongoData.products }, { new: true })
@@ -222,21 +229,24 @@ class CartsMongoRoutes {
                       } - time: ${new Date().toLocaleTimeString()
                       } updateCart: ${updatedCart}`
                     );
-                  ///console.log(updatedCart);
+                    cartMongoData = updatedCart;
                   })
                   .catch(error => {
                     req.logger.fatal(
                       `Method: ${req.method}, url: ${
                         req.url
                       } - time: ${new Date().toLocaleTimeString()
-                      } con ERROR: ${error.message}`);                    
+                      } con ERROR: ${error.message}`);  
+                    return httpResp.Error(res,`the cart by Id in Mongo Atlas not update`, {error:EnumErrors.DATABASE_ERROR}); 
                   });             
             }// fin else de situacion 4
         }//fin else del if 2, situacion 3
-        return res.status(201).json({
-          //agregar 
-          message: `cart found successfully and update in Mongo Atlas`        
-        });
+        return httpResp.OK(res,`cart found successfully and update in Mongo Atlas`,{cartMongoData});
+        
+        // return res.status(201).json({
+        //   //agregar 
+        //   message: `cart found successfully and update in Mongo Atlas`        
+        // });
       } catch (error) {
         req.logger.fatal(
           `Method: ${req.method}, url: ${
@@ -244,9 +254,11 @@ class CartsMongoRoutes {
           } - time: ${new Date().toLocaleTimeString()
           } con ERROR: ${error.message}`);   
         //recibe tambiem el catch de getCartById ProductMongo
-         return res.status(400).json({
-            message: error.message ?? error            
-          });
+         return httpResp.Error(res,error.message ?? error , error);
+
+        //  return res.status(400).json({
+        //     message: error.message ?? error            
+        //   });
         }
     });
 
@@ -265,17 +277,21 @@ class CartsMongoRoutes {
           const cartAux = cart;
           cartAux.products.splice(index,1);    
           await cartsMongoModel.updateOne({_id:cid}, cartAux);
-          const cartUpdate = await cartsMongoModel.findById({_id: cid});     
-          return res.json({message: `se eliminó producto en este carrito`, cartUpdate: cartUpdate })
+          const cartUpdate = await cartsMongoModel.findById({_id: cid}); 
+          return httpResp.OK(res,`the product by Id in cart by Id in Mongo Atlas deleted`, {cartUpdate: cartUpdate}); 
+         
         }else{
-          return res.json({message: `no existe el producto en este carrito`})
+          return httpResp.NotFound(res,`no existe el producto en este carrito`, {productId: pid}); 
+
         }
       } catch (error) {
         req.logger.fatal(
           `Method: ${req.method}, url: ${
             req.url
           } - time: ${new Date().toLocaleTimeString()
-          } con ERROR: ${error.message}`);   
+          } con ERROR: ${error.message}`);  
+          return httpResp.Error(res,`the cart by Id in Mongo Atlas not deleted`, {error:EnumErrors.DATABASE_ERROR}); 
+
       }
       
     });
@@ -290,16 +306,20 @@ class CartsMongoRoutes {
       try{
         const { cid} = req.params;
         let result = await cartsMongoModel.findOneAndUpdate({_id:`${cid}`},{products:[]});
-        return res.json({ 
-          message: `cartsMongo DELETE all products sucessfully`, 
-          result:result });
+        return httpResp.Ok(res,`cartsMongo DELETE all products sucessfully`, {result:result}); 
+
+        // return res.json({ 
+        //   message: `cartsMongo DELETE all products sucessfully`, 
+        //   result:result });
         
       } catch (error) {
         req.logger.fatal(
           `Method: ${req.method}, url: ${
             req.url
           } - time: ${new Date().toLocaleTimeString()
-          } con ERROR: ${error.message}`);   
+          } con ERROR: ${error.message}`);  
+          return httpResp.Error(res,`the cart by Id in Mongo Atlas not deleted`, {error:EnumErrors.DATABASE_ERROR}); 
+
       }
       
     });
@@ -315,17 +335,16 @@ class CartsMongoRoutes {
         const { cid} = req.params;
         const arrayItemsProducts= req.body.products;
         let result = await cartsMongoModel.findOneAndUpdate({_id:`${cid}`},{products:arrayItemsProducts}, { new: true });
-        return res.json({ 
-          message: `cartsMongo update array of products with PUT sucessfully`, 
-          result:result });
-
+        return httpResp.Ok(res,`cartsMongo update array of products with PUT sucessfully`, {result:result}); 
 
       } catch (error) {
         req.logger.fatal(
           `Method: ${req.method}, url: ${
             req.url
           } - time: ${new Date().toLocaleTimeString()
-          } con ERROR: ${error.message}`);   
+          } con ERROR: ${error.message}`);  
+          return httpResp.Error(res,`cartsMongo NOT update array of products with PUT`, {error:EnumErrors.DATABASE_ERROR}); 
+
       }
     });
 
@@ -341,16 +360,15 @@ class CartsMongoRoutes {
         let result = await cartsMongoModel.findOneAndUpdate(
           { _id: req.params.cid, "products.product": req.params.pid },
           { $set: { "products.$.quantity": req.body.quantity } },
-          { new: true });        
-      return res.json({ 
-        message: `cartsMongo PUT set quantity in product pid of cart cid`,
-        result:result });
+          { new: true });   
+          return httpResp.Ok(res,`cartsMongo PUT set quantity in product pid of cart cid`, {result:result}); 
       } catch (error) {
         req.logger.fatal(
           `Method: ${req.method}, url: ${
             req.url
           } - time: ${new Date().toLocaleTimeString()
           } con ERROR: ${error.message}`);   
+          return httpResp.Error(res,`Error cartsMongo PUT NOT set quantity in product pid of cart cid`, {error:EnumErrors.DATABASE_ERROR});
       }
     });
   }

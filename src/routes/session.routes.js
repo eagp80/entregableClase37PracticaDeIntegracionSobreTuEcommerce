@@ -8,6 +8,8 @@ import { generateJWT } from "../utils/jwt.js";
 
 import { passportCall } from "../utils/jwt.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
+import { HttpResponse } from "../middleware/error-handler.js";
+const httpResp  = new HttpResponse;
 
 
 
