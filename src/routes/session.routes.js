@@ -6,10 +6,12 @@ import { createHashValue, isValidPasswd } from "../utils/encrypt.js";
 import passport from "passport";
 import { generateJWT } from "../utils/jwt.js";
 
+
 import { passportCall } from "../utils/jwt.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
-import { HttpResponse } from "../middleware/error-handler.js";
-const httpResp  = new HttpResponse;
+import {HttpResponse} from "../middleware/error-handler.js";
+import { emailRefreshPassword } from "../utils/email.js";
+
 
 
 
@@ -19,6 +21,7 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
   path = "/session";
   router = Router();
   api_version= API_VERSION;
+  httpResp  = new HttpResponse();
 
   constructor() {
     this.initSessionRoutes();
@@ -278,6 +281,63 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
           } con ERROR: ${error}`);             
       }
     })
+
+    this.router.post(`${this.path}/forgot-password`, async (req,res)=>{
+      const { email } = req.body;
+      console.log("🚀 ~ file: session.routes.js:287 ~ SessionRoutes ~ this.router.post ~ email:", email)
+      const user = await userModel.findOne({ email });
+      console.log("🚀 ~ file: session.routes.js:289 ~ SessionRoutes ~ this.router.post ~ user:", user)
+
+      if (!user) {
+        const error = new Error(`The user does not exist`);
+        return this.httpResp.NotFound(res, 'Unexisting User', error);
+      }
+
+      try {
+        const token = await generateJWT({ id: user._id, email: user.email, first_name: user.first_name });
+        emailRefreshPassword(user, token);
+        return this.httpResp.OK(res, 'OK', 'We have sent an email with the instructions')
+      } catch (error) {
+        req.logger.error("There was an error with the recovery email");
+        return this.httpResp.Error(res, 'Unexisting User', error);
+
+      }
+    })
+
+    this.router.route("/set-new-password/:token").post(async (req, res) => {
+      const { token } = req.params;
+      const { password } = req.body;
+    
+      try {
+        const user = jwt.verify(token, SECRET_JWT);
+        const dbUser = await userModel.findById(user.user.id);
+    
+        if (!dbUser) {
+          return this.httpResp.NotFound(res, 'Unexisting User', `Could not find the user`)
+        }
+    
+        // Verificar si la nueva contraseña es igual a la contraseña actual
+        if (isPasswordValid(password, dbUser.password)) {
+          return this.httpResp.BadRequest(res, 'Password Error', 'New password cannot be the same as the current password')
+        }
+    
+        const newPassword = await createHashValue(password);
+        await userModel.findByIdAndUpdate(
+          user.user.id,
+          { password: newPassword },
+          { new: true }
+        );
+    
+        return this.httpResp.OK(res, 'OK', 'The password has been updated');
+    
+      } catch (error) {
+        console.error("Error in newPassword function:", error);
+        // Redirección en caso de token no válido
+        return res.redirect('/reset-password');
+      }
+    
+    });
+
   }  
 }
 export default SessionRoutes;

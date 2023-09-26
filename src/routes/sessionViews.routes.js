@@ -5,8 +5,9 @@ import { API_VERSION } from "../config/config.js";
 import passport from "passport";
 import { passportCall } from "../utils/jwt.js";
 import handlePolicies from "../middleware/handle-policies.middleware.js";
-import { HttpResponse } from "../middleware/error-handler.js";
-const httpResp  = new HttpResponse;
+import {HttpResponse} from "../middleware/error-handler.js";
+
+// const httpResp  = new HttpResponse;
 
 
 
@@ -88,6 +89,8 @@ class SessionViewsRoutes {
     this.router.get(`${this.path}recover`, async (req,res)=>{
       res.render("recover");
     })
+
+
   }
 }
 export default SessionViewsRoutes;
