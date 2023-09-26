@@ -302,7 +302,7 @@ export const emailRefreshPassword = async (user, token) => {
                                     <td
                                       style="font-family: 'Proxima Nova', Helvetica, Arial ,sans-serif;font-size: 14px; color:#fff;">
                                       <a class=mail__button
-                                        href="http://localhost:8000/set-new-password/${token}"
+                                        href="http://localhost:8000/api/v1/set-new-password/${token}"
                                         target="_blank"
                                         style="
                                           text-decoration:none;

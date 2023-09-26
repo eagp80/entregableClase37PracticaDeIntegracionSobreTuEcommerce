@@ -90,6 +90,13 @@ class SessionViewsRoutes {
       res.render("recover");
     })
 
+    this.router.get(`${this.path}set-new-password/:token`, (req, res) => {
+      const { token } = req.params
+      res.render("setNewPassword", {
+        token
+      });
+    });
+
 
   }
 }

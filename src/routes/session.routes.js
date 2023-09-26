@@ -1,10 +1,11 @@
 import { Router } from "express";
 import userModel from "../dao/models/user.model.js";
 import session from "express-session";
-import { API_VERSION } from "../config/config.js";
+import { API_VERSION, SECRET_JWT } from "../config/config.js";
 import { createHashValue, isValidPasswd } from "../utils/encrypt.js";
 import passport from "passport";
 import { generateJWT } from "../utils/jwt.js";
+import jwt from "jsonwebtoken";
 
 
 import { passportCall } from "../utils/jwt.js";
@@ -284,9 +285,7 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
 
     this.router.post(`${this.path}/forgot-password`, async (req,res)=>{
       const { email } = req.body;
-      console.log("🚀 ~ file: session.routes.js:287 ~ SessionRoutes ~ this.router.post ~ email:", email)
       const user = await userModel.findOne({ email });
-      console.log("🚀 ~ file: session.routes.js:289 ~ SessionRoutes ~ this.router.post ~ user:", user)
 
       if (!user) {
         const error = new Error(`The user does not exist`);
@@ -304,20 +303,26 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
       }
     })
 
-    this.router.route("/set-new-password/:token").post(async (req, res) => {
+    this.router.post(`${this.path}/set-new-password/:token`,async (req, res) => {
       const { token } = req.params;
       const { password } = req.body;
+      console.log("🚀 ~ file: session.routes.js:309 ~ SessionRoutes ~ this.router.post ~ req.body=password:", password)
     
       try {
         const user = jwt.verify(token, SECRET_JWT);
         const dbUser = await userModel.findById(user.user.id);
+        console.log("🚀 ~ file: session.routes.js:313 ~ SessionRoutes ~ this.router.post ~ dbUser:", dbUser)
     
         if (!dbUser) {
           return this.httpResp.NotFound(res, 'Unexisting User', `Could not find the user`)
         }
     
         // Verificar si la nueva contraseña es igual a la contraseña actual
-        if (isPasswordValid(password, dbUser.password)) {
+        if (isValidPasswd(password, dbUser.password)) {
+          console.log("dbUser.password", dbUser.password);
+          console.log("🚀 ~ file: session.routes.js:322 ~ SessionRoutes ~ this.router.post ~ password:", password)
+          let bandera = 1;
+          console.log("🚀 ~ file: session.routes.js:323 ~ SessionRoutes ~ this.router.post ~ bandera:", bandera)
           return this.httpResp.BadRequest(res, 'Password Error', 'New password cannot be the same as the current password')
         }
     
@@ -331,9 +336,9 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
         return this.httpResp.OK(res, 'OK', 'The password has been updated');
     
       } catch (error) {
-        console.error("Error in newPassword function:", error);
+        console.error("Error in newPassword function:", error.message);
         // Redirección en caso de token no válido
-        return res.redirect('/reset-password');
+        return res.redirect('../api/v1/reset-password');
       }
     
     });
