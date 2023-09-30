@@ -83,6 +83,42 @@ class CartsMongoManager {
         throw error; 
     }
   };
+
+  deleteAllProductsFromCart = async (cid) => {
+    try {
+      await cartsModel.findOneAndUpdate(
+        { _id: cid },
+        { $set: { products: [] }},
+        { new: true},
+      )
+
+      return { msg: 'Cart emptyed' }
+
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error while emptying cart')
+    }
+  };
+
+  deleteProductFromCart = async (cid, pid) => {
+    try {
+      const deletedProduct = await cartsMongoModel.findOneAndUpdate(
+        { _id: cid },
+        { $pull: { products: { product: pid }}},
+        { new: true },
+      );
+
+      return {
+        msg: 'Product deleted',
+        deletedProduct,
+      };
+      
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error while deleting product from cart');
+    }
+  }
+
 }
 
 export default CartsMongoManager;

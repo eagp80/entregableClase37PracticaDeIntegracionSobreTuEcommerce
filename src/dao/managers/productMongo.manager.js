@@ -63,6 +63,23 @@ class ProductMongoManager {
       throw error;
     }
   };
+
+    // This method updates a Product information a saves the change into the DB
+    updateProduct = async (id, updatedData) => {
+
+      try {
+        const productUpdated = await productsMongoModel.findOneAndUpdate({ _id: id }, updatedData, { new: true });
+          
+        if(!productUpdated) return {msg: `Unexisting product with id: ${id}`}
+  
+        return {msg: 'Product Updated', productUpdated}
+        
+      } catch (error) {
+        console.log(error);
+        throw new Error('Error while updating the product');
+      }
+    }
+
 }
 
 export default ProductMongoManager;

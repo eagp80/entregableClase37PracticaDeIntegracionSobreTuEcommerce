@@ -1,7 +1,10 @@
 import { Router } from "express";
 import cartsMongoModel  from "../dao/models/cartsMongo.models.js";
+import userModel from "../dao/models/user.model.js";
+import ticketsManager from "../dao/managers/tickets.manager.js";
 import productMongoModel from "../dao/models/productsMongo.models.js";
 import CartMongoManager from "../dao/managers/cartMongo.manager.js";
+import ProductMongoManager from "../dao/managers/productMongo.manager.js";
 import { Schema, model, Types } from "mongoose";
 import { HttpResponse, EnumErrors } from "../middleware/error-handler.js";
 const { ObjectId } = Types;
@@ -14,6 +17,8 @@ class CartsMongoRoutes {
   path = "/carts";
   router = Router();
   cartMongoManager = new CartMongoManager();
+  productMongoManager = new ProductMongoManager();
+
 
   constructor() {
     this.initCartsMongoRoutes();
@@ -371,6 +376,62 @@ class CartsMongoRoutes {
           return httpResp.Error(res,`Error cartsMongo PUT NOT set quantity in product pid of cart cid`, {error:EnumErrors.DATABASE_ERROR});
       }
     });
+
+    this.router.post(`${this.path}/:cid/purchase`, async (req, res) => {
+      const { cid } = req.params;    
+      try {
+      // Corroboro la existencia del cart
+      const cart = await this.cartMongoManager.getCartMongoByIdPopulate(cid);
+           
+        if (!cart)  return httpResp.BadRequest(res,'Cart not found',cart);
+
+      // creo variables para almacenar productos cuyo stock es mejor a la compra, y otra para el monto total de la compra
+      const outOfStock = [];
+      let purchaseAmount = 0;
+
+      // Itero sobre los productos del cart. 
+      // Si tiene existencia suficiente: lo sumo al monto total de la compa, actualizo la existencia, y lo elimino del carrito.
+      // Si no tiene existencia suficiente agrego al producto al arreglo de "outOfStock"
+      for (const element of cart.products) {
+        if ( element.product.stock > element.quantity ) {
+          purchaseAmount += element.quantity * element.product.price
+          await this.productMongoManager.updateProduct(element.product._id, {
+            stock: element.product.stock - element.quantity
+          })
+          await this.cartMongoManager.deleteProductFromCart(cid, element.product._id)
+        } else {
+          outOfStock.push(element.product.title)
+        }
+      }
+
+      // Si ningun producto tenia stock
+      if(outOfStock.length > 0 && purchaseAmount === 0) {
+        console.log("🚀 ~ file: cartsMongo.router.js:406 ~ CartsMongoRoutes ~ this.router.post ~ outOfStock:", outOfStock)
+        return httpResp.BadRequest(res,'Selected products are out of stock.',null);   
+      }
+
+      // Corroboro el id del usuario que es dueño de ese cart
+      const userWithCart = await userModel.findOne({ cart: cid });
+      console.log("🚀 ~ file: cartsMongo.router.js:415 ~ CartsMongoRoutes ~ this.router.post ~ userWithCart:", userWithCart)
+      
+      // Creo un ticket pasandole el email del usuario dueño del carrito, y el monto total de la compra.
+      // (El id carrito se le asigna al usuario cuando el mismo se registra). Relacion 1 a 1 entre cart y usuario.
+      const ticket = await ticketsManager.createTicket(userWithCart.email, purchaseAmount)
+
+      // Si algunos productos no tenian stock
+      if(outOfStock.length > 0 && purchaseAmount > 0) {
+        return httpResp.OK(res,'Purchase submitted, The following products are out of stock:',{outOfStock, ticket});
+      }
+      // Si todos los productos tenian stock
+      return httpResp.OK(res,'Purchase submitted, ticket:',ticket);
+      // res.send(resp);          
+      } catch (error) {
+        console.log(error);
+        //req.logger.error(error);
+        // res.status(500).send({msg: error.message});
+        httpResp.Error(res, 'Error while purchasing', error);
+      }
+    })
   }
 }
 
