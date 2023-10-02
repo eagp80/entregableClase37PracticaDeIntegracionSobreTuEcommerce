@@ -43,7 +43,7 @@ class CartsMongoRoutes {
           //   message: `the cartMongo not created`,
           // });
         }//se cambio por throw,
-        return httpResp.Ok(res,`Carrito nuevo creado`, {newCartMongo:newCartMongo}); 
+        return httpResp.OK(res,`Carrito nuevo creado`, {newCartMongo:newCartMongo}); 
 
         // return res.status(201).json({
         //   message: `cart created successfully in Mongo Atlas`,
@@ -84,7 +84,7 @@ class CartsMongoRoutes {
           //   message: `the cart by Id in Mongo Atlas not found`,
           // });
         }//se cambio por throw,
-        return httpResp.Ok(res,`cart found successfully in Mongo Atlas (with population)`, {cart: cartMongoData}); 
+        return httpResp.OK(res,`cart found successfully in Mongo Atlas (with population)`, {cart: cartMongoData}); 
 
         // return res.status(201).json({
         //   message: `cart found successfully in Mongo Atlas (with population)`,
@@ -340,7 +340,7 @@ class CartsMongoRoutes {
         const { cid} = req.params;
         const arrayItemsProducts= req.body.products;
         let result = await cartsMongoModel.findOneAndUpdate({_id:`${cid}`},{products:arrayItemsProducts}, { new: true });
-        return httpResp.Ok(res,`cartsMongo update array of products with PUT sucessfully`, {result:result}); 
+        return httpResp.OK(res,`cartsMongo update array of products with PUT sucessfully`, {result:result}); 
 
       } catch (error) {
         req.logger.fatal(

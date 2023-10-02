@@ -4,6 +4,10 @@
         - Ruta de inicio, de entrada a la api (redirige al login): 
         http://localhost:8000/api/v1/
 
+        - Para recuperar contraseña, entrar a ruta de arriba, clic en boton donde dice Ir a formulario de restauración de contraseña
+
+        - Ruta patra crear ticket de compra (metodo POST, con postman) http://localhost:8000/api/v1/carts/:cid/purchase
+
         - Ruta de mocking, generando 50 productos con faker en localhost:8000/api/v1/mockingproducts.
 
         - Ruta de creacion de producto con postmnan mediante metodo post y raw json http://localhost:8000/api/v1/products/ .

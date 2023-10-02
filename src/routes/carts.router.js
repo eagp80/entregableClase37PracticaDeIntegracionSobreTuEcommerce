@@ -28,7 +28,7 @@ router.get('/:cid', (req,res)=>{
        // res.send({error:"El carrito no existe."});
     }   
     else {    
-        return httpResp.Ok(res,`Productos en carrito con id: ${cid}`, {productos:cart.products});    
+        return httpResp.OK(res,`Productos en carrito con id: ${cid}`, {productos:cart.products});    
         //res.send({productos:cart.products})};//envia productos dentro de carrito con id especificado 
     }
 })
@@ -36,7 +36,7 @@ router.get('/:cid', (req,res)=>{
 
 router.post('/',(req,res)=>{//si son varios archivos uploader.array('nombre de campos') se almacena en req.files
     const result= cartManager.addCart();
-    return httpResp.Ok(res,"Carrito añadido (con array de productos vacío)", {result:result});    
+    return httpResp.OK(res,"Carrito añadido (con array de productos vacío)", {result:result});    
 
     //res.send({status:"ok", message :"Carrito añadido (con array de productos vacío)" });
 
@@ -48,7 +48,7 @@ router.post('/:cid/product/:pid', (req,res)=>{
         const pid = req.params.pid;       
        
         const result = cartManager.updateCart(cid,pid);
-        return httpResp.Ok(res,`Producto ${pid} añadido al carrito ${cid}`, {result:result}); 
+        return httpResp.OK(res,`Producto ${pid} añadido al carrito ${cid}`, {result:result}); 
         //res.send({status:"ok", message :`Producto ${pid} añadido al carrito ${cid}`});    
     })
 
