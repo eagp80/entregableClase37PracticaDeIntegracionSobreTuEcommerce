@@ -24,6 +24,9 @@
 ### ADEMÁS TIENE: MANEJO DE VARIABLES DE ENTORNO CON dotenv CAMBIO DE VARIABLES DE ENTORNO DURANTE EJECUCIÓN CON cross-env, SE MUESTRAN RUTAS EN TABLA EN CONSOLA LADO BACKEND CON express-routemap, (PRONTO TENDRÁ MANEJO DE ARCHIVOS CON MULTER).
 
 ### Como usar la app:
+<h2>Ruta de inicio, de entrada a la api (redirige al login): http://localhost:8000/api/v1/</h2>
+<h2> Para recuperar contraseña, entrar a ruta de arriba, clic en boton donde dice Ir a formulario de restauración de contraseña </h2>
+<h2>Ruta patra crear ticket de compra (metodo POST, con postman) http://localhost:8000/api/v1/carts/:cid/purchase <h2>
 <h2> Ruta de mocking, generando 50 productos con faker en localhost:8000/api/v1/mockingproducts </h2>
 
 <h2> Ruta de creacion de producto con postmnan mediante metodo post y raw json http://localhost:8000/api/v1/products/</h2>
@@ -34,6 +37,10 @@
  <h2>Ejemplos de rutas:</h2>
         Ruta de inicio, de entrada a la api (redirige al login): 
         http://localhost:8000/api/v1/
+
+        Para recuperar contraseña, entrar a ruta de arriba, clic en boton donde dice Ir a formulario de restauración de contraseña.
+
+        Ruta patra crear ticket de compra (metodo POST, con postman) http://localhost:8000/api/v1/carts/:cid/purchase
 
         Ruta de usuario actual logueado:
         http://localhost:8000/api/v1/session/current
