@@ -265,10 +265,10 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
           } - time: ${new Date().toLocaleTimeString()
           } -BODY UPDATE*** CAMPO CORREO PARA ACTUALIZAR PASSWORD:`+ JSON.stringify(req.body.email));
         const {new_password,email}=req.body;
-        const newPswHashed = await createHashValue(new_password);
-        const user = await userModel.findOne({email});
+        const newPswHashed = await createHashValue(new_password);//encriptamos la nueva
+        const user = await userModel.findOne({email});//traemos usuario en base de datos
         if(!user) return res.status(401).json({message:"credenciales invalidas o erroneas"});
-        const updateUser = await userModel.findOneAndUpdate({email},{password:newPswHashed});
+        const updateUser = await userModel.findOneAndUpdate({email},{password:newPswHashed});//cambiamos la clave vieja
         if(!updateUser){
           return res.json({message:"Problemas actualizando contraseña"});
         }
@@ -338,7 +338,7 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
       } catch (error) {
         console.error("Error in newPassword function:", error.message);
         // Redirección en caso de token no válido
-        return res.redirect('../api/v1/reset-password');
+        return res.redirect('../../recover');
       }
     
     });

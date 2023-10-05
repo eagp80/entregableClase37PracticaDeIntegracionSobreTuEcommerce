@@ -119,3 +119,12 @@
 # Rutas de  views (carritos y productos) con Mongo: 
 
 - Ver la iamgen en carpeta carpeta: imagenes explicativas.
+
+# Funcionamneto del codigo:
+ - Al hacer clic en boton de recuperar contraseña se produce un GET hacia la ruta localhost:8000/api/v1/recover donde renderiza  a la vista recover.handlebars, aca se muestra una casilla para introducir el correo electronico al dar click en boton enviar se realiza un POST a /api/v1/session/forgot-password aca se enviara un link de recuperacion a ese correo el link contiene un token que durara una hora.
+
+ - El boton que se envia al correo dirige con GET a http://localhost:8000/api/v1/set-new-password/:token En este endpoint se renderiza a la vista setNewPassword.handlebars donde se tiene un formulario con dos casillas para colocar la nueva contraseña y confirmarla.
+
+ - El fromulario reenvía con un POST a la misma ruta http://localhost:8000/api/v1/set-new-password/:token
+
+ -  A dicho endpoint se envia el toquen por req.params y la contraseña por req.body , en dicho endpoint se verifica el token, se busca el usuario en la base de datos, se verifica que no sean iguales la contraseña hasheada en base de datos con la nueva contraseña que envia el usuario por fromulario (con isValidPasswd), se hashea la nueva contraseña, se actualiza o cambia la contraseña vieja por la nueva hasheada, se envia respuesta de contraseña cambiada a usuario. En caso de error se redirige a localhost/api/v1/recover

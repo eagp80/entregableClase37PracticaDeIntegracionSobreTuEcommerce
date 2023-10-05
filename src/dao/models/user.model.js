@@ -6,6 +6,7 @@ const roleType = {
   PUBLIC: "PUBLIC",
   BRONCE: "BRONCE",
   SILVER: "SILVER",
+  PREMIUN: "PREMIUN",
 };
 
 const collectionName = "Usuarios";

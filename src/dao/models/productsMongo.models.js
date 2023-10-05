@@ -42,6 +42,10 @@ const productsMongoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  owner: {
+    type: String, // Almacena el correo electrónico del propietario
+    default: 'ADMIN', // Valor predeterminado 'admin'
+  },
     
 });
 
