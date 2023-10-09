@@ -7,7 +7,7 @@ const generateJWT = (user) => {
   return new Promise((resolve, reject) => {
     jwt.sign({ user }, SECRET_JWT, { expiresIn: "30m" }, (err, token) => {
       if (err) {
-        console.log(err);
+        console.error(err);
         reject("can not generate jwt token");
       }
       resolve(token);
@@ -16,11 +16,11 @@ const generateJWT = (user) => {
 };
 
 const cookieExtractor = (req) => {
+
   let token = null;
   if (req && req.cookies) {
     token = req.cookies["token"];
   }
-
   return token;
 };
 
@@ -35,6 +35,7 @@ const passportCall = (strategy) => {
           message: `error in jwt***`,//ojo...
         });
       }
+      console.log({user});
       req.user = user;
       next();
     })(req, res, next);

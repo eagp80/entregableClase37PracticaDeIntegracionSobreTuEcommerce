@@ -61,7 +61,7 @@ app.engine('handlebars', handlebars.engine());//arrancamos y le ponemos un alias
 app.set('views', `${__dirname}/views`);//le decimos a app donde estaran las vistas
 app.set('view engine', 'handlebars');//le decimos a app que el motor de vistas es handlebars con alias definido dos lineas antes
 
-//app.use('/',viewsRouter);//al llegar la ruta especificada lo procesa con viewsRouter
+app.use('/',viewsRouter);//al llegar la ruta especificada lo procesa con viewsRouter
 
 //*****Se comenta este bloque de codigo para deshabilitar elservidor con file system */
        // const serverHTTP = app.listen(8081, ()=>{

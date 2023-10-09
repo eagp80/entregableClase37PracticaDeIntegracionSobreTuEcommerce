@@ -5,8 +5,10 @@ import productsMongoModel from "../dao/models/productsMongo.models.js";
 import productsMongoData from "../db/productsMongo.js";
 import ProductMongoManager from "../dao/managers/productMongo.manager.js";
 import { HttpResponse, EnumErrors } from "../middleware/error-handler.js";
+import { passportCall } from "../utils/jwt.js";
+import handlePolicies from "../middleware/handle-policies.middleware.js";
+ const  httpResp  = new HttpResponse();
 
-const httpResp  = new HttpResponse;
 class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
   path = "/products";
   router = Router();
@@ -71,7 +73,8 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
 
     //*******Crear  un producto pasando sus popiedades (clave:valor por el body desde postman********** */
     //*********************************************************************************** */
-    this.router.post(`${this.path}`, async (req, res) => {
+    this.router.post(`${this.path}`, [passportCall("jwt"), handlePolicies(["USER","ADMIN"])], async (req, res) => {
+      //console.log( res.cookie);
       try {
         const { title, description, code, price, status, stock, category,thumbnails } = req.body;
         let paramsInvalids = [];
@@ -99,8 +102,10 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
           paramsInvalids.forEach((param)=> text=text+" "+param+"," ); 
           return httpResp.BadRequest(res, `missing ${text} in body`, req.body);
         }
+        console.log("req.user.user.email", req.user.user.email)
 
         const productMongoBody = req.body;
+        productMongoBody.owner= req.user.user.email;
 
         // TODO REVISANDO SI EL producto YA FUE CREADO ANTERIOMENTE
         const newProductMongo = await this.productMongoManager.createProductMongo(productMongoBody);
@@ -117,7 +122,9 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
           } con ERROR: ${error.message}`); 
 
         //recibe tambiem el catch de createProductMongo
+        console.log("alexxxxx");
         return httpResp.Error(res,error.message ?? error , error);
+        
         //  return res.status(400).json({
         //     message: error.message ?? error            
         //   });

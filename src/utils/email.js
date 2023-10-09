@@ -394,7 +394,6 @@ export const emailRefreshPassword = async (user, token) => {
 `,
     })
   } catch (error) {
-    console.log("EFREN");
-    console.log(error);
+    console.error(error);
   }
 }

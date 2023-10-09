@@ -143,7 +143,7 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
           `Method: ${req.method}, url: ${
             req.url
           } - time: ${new Date().toLocaleTimeString()
-          } -Guardando user en req.user: ${req.user}`); 
+          } -Guardando user en req.user: `+JSON.stringify(req.user)); 
         
         // TODO: RESPUESTA DEL TOKEN ALMACENADO EN LA COOKIE
          res.cookie("token", token, { maxAge: 1000000, httpOnly: true });
@@ -257,7 +257,7 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
       res.send({error:"Failed"});
     })
 
-    this.router.post(`${this.path}/recover-psw`,async (req,res)=>{
+    this.router.post(`${this.path}/recover-psw`,async (req,res)=>{//esta ruta ya no se usa
       try {
         req.logger.info(
           `Method: ${req.method}, url: ${
@@ -323,7 +323,7 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
           console.log("🚀 ~ file: session.routes.js:322 ~ SessionRoutes ~ this.router.post ~ password:", password)
           let bandera = 1;
           console.log("🚀 ~ file: session.routes.js:323 ~ SessionRoutes ~ this.router.post ~ bandera:", bandera)
-          return this.httpResp.BadRequest(res, 'Password Error', 'New password cannot be the same as the current password')
+          return this.httpResp.BadRequest(res, 'Password Error', 'El nuevo password debe ser diferente al actual')
         }
     
         const newPassword = await createHashValue(password);
@@ -333,10 +333,14 @@ class SessionRoutes {//no es un Router pero adentro tiene uno
           { new: true }
         );
     
-        return this.httpResp.OK(res, 'OK', 'The password has been updated');
+        return this.httpResp.OK(res, 'OK', 'Password actualizado');
     
       } catch (error) {
-        console.error("Error in newPassword function:", error.message);
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error}`); 
         // Redirección en caso de token no válido
         return res.redirect('../../recover');
       }

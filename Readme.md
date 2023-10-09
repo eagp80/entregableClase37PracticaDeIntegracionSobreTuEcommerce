@@ -127,4 +127,4 @@
 
  - El fromulario reenvía con un POST a la misma ruta http://localhost:8000/api/v1/set-new-password/:token
 
- -  A dicho endpoint se envia el toquen por req.params y la contraseña por req.body , en dicho endpoint se verifica el token, se busca el usuario en la base de datos, se verifica que no sean iguales la contraseña hasheada en base de datos con la nueva contraseña que envia el usuario por fromulario (con isValidPasswd), se hashea la nueva contraseña, se actualiza o cambia la contraseña vieja por la nueva hasheada, se envia respuesta de contraseña cambiada a usuario. En caso de error se redirige a localhost/api/v1/recover
+ -  A dicho endpoint se envia el toquen por req.params y la contraseña por req.body , en dicho endpoint se verifica el token, se busca el usuario en la base de datos, se verifica que no sean iguales la contraseña hasheada en base de datos con la nueva contraseña que envia el usuario por fromulario (con isValidPasswd), se hashea la nueva contraseña, se actualiza o cambia la contraseña vieja por la nueva hasheada, se envia respuesta de contraseña cambiada a usuario. En caso de error se redirige a localhost:8000/api/v1/recover
