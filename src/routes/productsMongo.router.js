@@ -73,7 +73,7 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
 
     //*******Crear  un producto pasando sus popiedades (clave:valor por el body desde postman********** */
     //*********************************************************************************** */
-    this.router.post(`${this.path}`, [passportCall("jwt"), handlePolicies(["USER","ADMIN"])], async (req, res) => {
+    this.router.post(`${this.path}`, [passportCall("jwt"), handlePolicies(["ADMIN", "PREMIUM"])], async (req, res) => {
       //console.log( res.cookie);
       try {
         const { title, description, code, price, status, stock, category,thumbnails } = req.body;
@@ -119,10 +119,8 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
           `Method: ${req.method}, url: ${
             req.url
           } - time: ${new Date().toLocaleTimeString()
-          } con ERROR: ${error.message}`); 
-
+          } con ERROR: ${error.message ?? error}`); 
         //recibe tambiem el catch de createProductMongo
-        console.log("alexxxxx");
         return httpResp.Error(res,error.message ?? error , error);
         
         //  return res.status(400).json({

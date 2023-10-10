@@ -29,21 +29,7 @@ class ProductMongoManager {
 
   createProductMongo = async (bodyProductMongo) => {
 
-    const {
-      title,
-      description,
-      code,
-      price,
-      stock,
-      category,
-      owner,
-    } = bodyProductMongo;
 
-
-    // if( !title || !description || !code || !price || !stock || !category || !owner) {
-
-    //   return httpResp.BadRequest(res, 'Error while creating product', "Fields 'title', 'description', 'code', 'price', 'stock', 'category', owner are necesary");
-    // }
     try {
       // TODO REVISANDO SI EL PRODUCTO YA FUE CREADO ANTERIOMENTE
       const productMongoDetail = await productsMongoModel.findOne({
