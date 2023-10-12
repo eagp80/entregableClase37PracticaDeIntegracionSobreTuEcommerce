@@ -35,7 +35,7 @@ const passportCall = (strategy) => {
           message: `error in jwt***`,//ojo...
         });
       }
-      console.log({user});
+      console.log("autenticando user:",{user});
       req.user = user;
       next();
     })(req, res, next);

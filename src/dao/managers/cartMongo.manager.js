@@ -114,7 +114,7 @@ class CartsMongoManager {
       };
       
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Error('Error while deleting product from cart');
     }
   }

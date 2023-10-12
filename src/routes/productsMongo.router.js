@@ -71,7 +71,7 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
       }
     });
 
-    //*******Crear  un producto pasando sus popiedades (clave:valor por el body desde postman********** */
+    //*******Crear  un producto pasando sus popiedades (clave:valor) por el body desde postman********** */
     //*********************************************************************************** */
     this.router.post(`${this.path}`, [passportCall("jwt"), handlePolicies(["ADMIN", "PREMIUM"])], async (req, res) => {
       //console.log( res.cookie);
@@ -102,7 +102,6 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
           paramsInvalids.forEach((param)=> text=text+" "+param+"," ); 
           return httpResp.BadRequest(res, `missing ${text} in body`, req.body);
         }
-        console.log("req.user.user.email", req.user.user.email)
 
         const productMongoBody = req.body;
         productMongoBody.owner= req.user.user.email;
@@ -110,6 +109,7 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
         // TODO REVISANDO SI EL producto YA FUE CREADO ANTERIOMENTE
         const newProductMongo = await this.productMongoManager.createProductMongo(productMongoBody);
         return httpResp.OK(res,`productMongo created successfully`,newProductMongo);
+
         // return res.status(201).json({
         //   message: `productMongo created successfully`,
         //   productMongo: newProductMongo,
@@ -126,6 +126,64 @@ class ProductsMongoRoutes {//no es un Router pero adentro tiene uno
         //  return res.status(400).json({
         //     message: error.message ?? error            
         //   });
+      }
+    });
+
+    this.router.put(`${this.path}/:pid`,[passportCall("jwt"), handlePolicies(["ADMIN", "PREMIUM"])], async (req, res) => {
+      try {
+        const { pid } = req.params;
+        const { title, description, code, price, status, stock, category,thumbnails } = req.body;
+        const { email, role } = req.user.user;
+        const productMongoBody = req.body;
+        const productMongoExist = await this.productMongoManager.getProductMongoById(
+          pid
+        );  
+        if (!productMongoExist) {
+          return httpResp.BadRequest(res, 'Unexisting Product', 'Product not found')
+        }
+        if (productMongoExist.owner !== email && role !== 'ADMIN') {
+          return httpResp.Forbbiden(res, '**Unauthorized**', 'You are not authorized to update this product')
+        }
+        const updatedProductMongo = await this.productMongoManager.updateProduct(pid,productMongoBody);
+
+        return httpResp.OK(res,`productMongo with pid: ${pid}, updated successfully`,updatedProductMongo);
+
+      } catch (error) {
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+        return httpResp.Error(res,error.message ?? error , error);
+      }
+    });
+
+    
+    this.router.delete(`${this.path}/:pid`,[passportCall("jwt"), handlePolicies(["ADMIN", "PREMIUM"])], async (req, res) => {
+      try {
+        const { pid } = req.params;
+        const { email, role } = req.user.user;
+        const productMongoBody = req.body;
+        const productMongoExist = await this.productMongoManager.getProductMongoById(
+          pid
+        );  
+        if (!productMongoExist) {
+          return httpResp.BadRequest(res, 'Unexisting Product for to delete', 'Product not found')
+        }
+        if (productMongoExist.owner !== email && role !== 'ADMIN') {
+          return httpResp.Forbbiden(res, '**Unauthorized**', 'You are not authorized to delete this product')
+        }
+        const deletedProductMongo = await this.productMongoManager.deleteProduct(pid);
+
+        return httpResp.OK(res,`productMongo with pid: ${pid}, deleted successfully`,deletedProductMongo);
+
+      } catch (error) {
+        req.logger.fatal(
+          `Method: ${req.method}, url: ${
+            req.url
+          } - time: ${new Date().toLocaleTimeString()
+          } con ERROR: ${error.message}`); 
+        return httpResp.Error(res,error.message ?? error , error);
       }
     });
 

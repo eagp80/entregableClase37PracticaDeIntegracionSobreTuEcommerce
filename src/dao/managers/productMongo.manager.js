@@ -58,8 +58,24 @@ class ProductMongoManager {
         return {msg: 'Product Updated', productUpdated}
         
       } catch (error) {
-        console.log(error);
+        console.error(error);
         throw new Error('Error while updating the product');
+      }
+    }
+
+    deleteProduct = async (id, updatedData) => {
+
+      try {
+        const productDeleted = await productsMongoModel.findByIdAndDelete(id)
+        
+          
+        if(!productDeleted) return {msg: `Unexisting product for to delete with id: ${id}`}
+  
+        return {msg: 'Product Deleted', productDeleted}
+        
+      } catch (error) {
+        console.error(error);
+        throw new Error('Error while deleting the product');
       }
     }
 
