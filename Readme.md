@@ -38,7 +38,19 @@
         Ruta de inicio, de entrada a la api (redirige al login): 
         http://localhost:8000/api/v1/
 
-        Para recuperar contraseña, entrar a ruta de arriba, clic en boton donde dice Ir a formulario de restauración de contraseña.
+        Para recuperar contraseña, entrar a ruta de arriba, clic en boton donde dice Ir a formulario de restauración de contraseña. Se enviara un corro al email con un link que contiene un token valido por 30 min.
+        
+        Ruta para cambiar role de usuario de USER a PREMIUM y viceversa:
+        http://localhost:8000/api/v1/users/premium/:uid
+
+        Ruta para crear producto:
+        Se debe ser PREMIUM , se loguea desde POSTMAN, se copia el token en authorization, bear token, desde POSTMAN se crea producto metodo POST a la ruta http://localhost:8000/api/v1/products/, pegando el token en authorization, bear token, y escribiendo los clave:valor de producto en el body, raw, JSON. El servidor creara el producto con la propiedad owner: email del usuario que lo creo.
+
+        Ruta eliminar y actualizar producto solo las pueden acceder ADMIN o PREMIUM, el owner de un producto y ADMIN son quienes pueden eliminar y actualizar un producto, las rutas son:
+        Desde POSTMAN metodo DELETE  http://localhost:8000/api/v1/products/:pidmetodo metodo PUT http://localhost:8000/api/v1/products/:pid, respectivamente
+
+        Ruta para agregar producto a carrito siendo PREMIUM:
+        debe loguearse desde navegador, aparece vista de productos debe  agregar un producto credao por ese usuario al carrito se vera que no deja agregarlo.
 
         Ruta patra crear ticket de compra (metodo POST, con postman) http://localhost:8000/api/v1/carts/:cid/purchase
 
