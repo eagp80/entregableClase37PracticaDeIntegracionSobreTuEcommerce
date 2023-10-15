@@ -12,7 +12,7 @@ const httpResp  = new HttpResponse;
 //********* /api/v1/current/
 
 class UserRoutes {//no es un Router pero adentro tiene uno
-  path = "/current";
+  path = "/users";
   router = Router();
   api_version= API_VERSION;
 
@@ -21,15 +21,15 @@ class UserRoutes {//no es un Router pero adentro tiene uno
   }
 
   initUserRoutes() {//  api/v1/current/
-    this.router.get(`${this.path}`, 
-    [passportCall("jwt"), handlePolicies(["USER","ADMIN"])],    
+    this.router.get(`${this.path}/current`, 
+    [passportCall("jwt"), handlePolicies(["USER","ADMIN","PREMIUM"])],    
     (req, res) =>{      
         return res.send(req.user); 
     });
     // USER, ADMINS
     this.router.get(
         `${this.path}/:uid`, 
-        handlePolicies(["USER", "ADMIN", "GOLD", "SILVER", "BRONCE"]),
+        handlePolicies(["USER", "ADMIN","PREMIUM", "GOLD", "SILVER", "BRONCE"]),
         async (req, res) =>{        
         try{
             const { uid } = req.params;
@@ -50,8 +50,8 @@ class UserRoutes {//no es un Router pero adentro tiene uno
       } 
     });
     // TODO: eso solo deberia hacerlo el ADMIN
-    this.router.delete(`${this.path}/:uid`,
-    handlePolicies(["BRONCE"]),
+    this.router.delete(`${this.path}/current/:uid`,
+    handlePolicies(["ADMIN"]),
     async (req,res)=>{
       try{
         const { uid } = req.params;
@@ -79,6 +79,38 @@ class UserRoutes {//no es un Router pero adentro tiene uno
      
       }
     })
+    this.router.get(//cambiar role de usuario  de premium  a user
+      `${this.path}/premium/:uid`, 
+      handlePolicies([ "ADMIN"]),
+      async (req, res) =>{        
+      try{
+          const { uid } = req.params;
+          const user = await userModel.findById(uid);
+      
+          if (!user) {
+            return res.status(404).json({
+              message: `user ${uid} info not found`,
+            });
+          }  
+        if(user.role==="ADMIN") return httpResp.BadRequest(res,`user with uid: ${uid}, is ADMIN, not modified`,user.email);
+          if(user.role==="PREMIUM") {
+            user.role = "USER";
+          } else{
+              if(user.role==="USER") user.role = "PREMIUM" ;
+            } ;
+          let userUpdated = await userModel.findByIdAndUpdate({_id:uid},{role:user.role}); 
+          userUpdated = await userModel.find({_id:uid}); 
+
+        return httpResp.OK(res,`user with uid: ${uid}, updated successfully`,userUpdated);
+
+    } catch (error) {
+      req.logger.fatal(
+        `Method: ${req.method}, url: ${
+          req.url
+        } - time: ${new Date().toLocaleTimeString()
+        } con ERROR: ${error.message}`);      
+    } 
+  });
 
   }  
 }

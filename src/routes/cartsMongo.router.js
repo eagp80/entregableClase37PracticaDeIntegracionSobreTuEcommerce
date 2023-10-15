@@ -7,6 +7,8 @@ import CartMongoManager from "../dao/managers/cartMongo.manager.js";
 import ProductMongoManager from "../dao/managers/productMongo.manager.js";
 import { Schema, model, Types } from "mongoose";
 import { HttpResponse, EnumErrors } from "../middleware/error-handler.js";
+import { passportCall } from "../utils/jwt.js";
+import handlePolicies from "../middleware/handle-policies.middleware.js";
 const { ObjectId } = Types;
 
 const httpResp  = new HttpResponse;
@@ -68,7 +70,7 @@ class CartsMongoRoutes {
     //*************************************************************************************
     //*************************************************************************************
     //********** Obtener un carrito con Id de carrito *************************************
-    //******  GET DE /api/v1/cartsmongo/:cid **************************************
+    //******  GET DE /api/v1/carts/:cid **************************************
     //*************************************************************************************
     //*************************************************************************************
     this.router.get(`${this.path}/:cid`, async (req, res) => {
@@ -108,15 +110,28 @@ class CartsMongoRoutes {
 
     //*************************************************************************************
     //*************************************************************************************
-    //*********** Agregar un Id de  producto a un carrito por medio de Id *****************
-    //******  POST DE /api/v1/cartsmongo/:cid/productMongo/:produtMongoId *************
+    //*********** Agregar un Id de  producto a un carrito dado por su Id *****************
+    //******  POST DE /api/v1/carts/:cid/products/:pid *************
     //*************************************************************************************
     //*************************************************************************************
-    this.router.post(`${this.path}/:cid/products/:pid`, async (req, res) => {
+    this.router.post(`${this.path}/:cid/products/:pid`,[passportCall("jwt"), handlePolicies(["ADMIN", "USER","PREMIUM"])], async (req, res) => {
       try {
         // TODO: HACER VALIDACIONES 
         const cid=req.params.cid;
         const pid=req.params.pid;
+        const { email, role } = req.user.user;
+        //comparar owner de producto con email de usuario, no proceder si son iguales
+
+        const productMongoExist = await this.productMongoManager.getProductMongoById(
+          pid
+        );  
+        if (!productMongoExist) {
+          return httpResp.BadRequest(res, 'Unexisting Product', 'Product not found')
+        }
+        if (productMongoExist.owner === email ) {
+          return httpResp.Forbbiden(res, 'you are owner', 'You are not can buy this product')
+        }
+
         let cartMongoData = {};
 
         cartMongoData = await this.cartMongoManager.getCartMongoById(cid);

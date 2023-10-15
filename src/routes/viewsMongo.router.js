@@ -121,7 +121,7 @@ class ViewsMongoRoutes {
    //******************************************************************************* */
     this.router.get(`${this.path}/products`,
     [passportCall("jwt"), 
-    handlePolicies(["USER", "ADMIN", "GOLD", "SILVER", "BRONCE"])], 
+    handlePolicies(["USER", "ADMIN", "PREMIUM","GOLD", "SILVER", "BRONCE"])], 
     async (req, res) => {//
       try {
         //obtener el carrito asosiado al usuario y ponerselo en linea 132s a CartOwn

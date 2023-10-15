@@ -1,0 +1,48 @@
+{
+	"info": {
+		"_postman_id": "fcde51d1-3a48-4451-9592-5a105bb564d2",
+		"name": "jwt pruebas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27350697"
+	},
+	"item": [
+		{
+			"name": "current/:uid",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"eagp80@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/api/v1/session/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"session",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

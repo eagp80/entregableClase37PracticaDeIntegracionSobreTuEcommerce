@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "5120a01e-cd2c-449d-be16-f8d62de1abb5",
+		"name": "Productos mongo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27350697"
+	},
+	"item": [
+		{
+			"name": "POST crea producto nuevo  desde formulario usando x-www-form-urlencoded",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "Producto 60",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Creado desde postman con POST",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "abc60",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "25",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "stock",
+							"value": "12",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "Matemáticas",
+							"type": "text"
+						},
+						{
+							"key": "thumbnails",
+							"value": "abc60.png",
+							"type": "text"
+						},
+						{
+							"key": "pid",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/products/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"products",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiZWFncDgwQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlkIjoiNjRlMTJhMmU2MDk0NjhiODVkM2QyZjEzIn0sImlhdCI6MTY5MjU1MjE5OSwiZXhwIjoxNjkyNTUzOTk5fQ.ExFViHtNveQSkeDQtb38JlBSTVeqswSNnElsEHdBi9I",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\":true ,\r\n    \"stock\":109109\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/products/6523435ed5732f639b13213d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"products",
+						"6523435ed5732f639b13213d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/products/6523435ed5732f639b13213d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"products",
+						"6523435ed5732f639b13213d"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
